@@ -1,13 +1,14 @@
-## *(Let's Get Started!)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
+# *(To Be Continued ...)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
 
-### Two goal of this implementation:
+
+## Two goal of this implementation:
 
 - Provide easy to read/learn code, avoiding nesting over nesting
 - The code compactly presents the core of those algorithms
 
 
 
-### Quick Facts you should know about this implementation:
+## Quick Facts you should know about this implementation:
 
 - All the core codes are presented in the /drl/"algo name"/ folder, which might be friendly for the reader
 - Trick usage is as minimized as possible
@@ -18,9 +19,12 @@
 
 
 
-### Quick Start
+## Run
 
-- To start an example experiment, say, use PPO to train an agent in the CartPole-v1 environment, you can direct use:
+#### Quick Start (An Running Script Example)
+
+
+- To start an example experiment, say, use PPO to train an agent in the "CartPole-v1'' environment, you can direct use:
 
 ```
 cd compactDRL
@@ -29,21 +33,23 @@ bash scripts/ppo/CartPole.sh 0 0
 
 
 
-### Structure
+## Structure
 
-├── drl   // Different algorithms
+    ├── drl   // Different algorithms             
         ├── ppo
-       		 ├── ppo stuffs
-      		  └── main.py
-├── envs   // Environments
-    	├── control.py
-   	 ├── atari.py
-   	 └── base.py
-├── buffers   // (purely for storage) Buffers
-   	 ├── normal_buffer.py
-  	  ├── image_buffer.py
-	    └── base.py
-├── scripts   // Running scripts
-├── results   // Contain potential future experiment results
-└── run.py   // Get Started Here!!!
+            ├── other ppo stuffs
+            └── main.py
+        ├── policy_gradient_agents
+        └── stochastic_policy_search_agents 
+    ├── envs   // Environments
+        ├── control.py // Environments
+        ├── atari.py
+        └── base.py
+    ├── buffers   // (purely for storage) Buffers 
+        ├── normal_buffer.py
+        ├── image_buffer.py
+        └── base.py 
+    ├── scripts
+    ├── results
+    └── run.py
 

@@ -28,9 +28,10 @@
 
 ```
 cd compactDRL
-bash scripts/ppo/CartPole.sh 0 0
+bash scripts/ppo/CartPole.sh 0 1
 ```
 
+where 0 is the gpu id and 1 is the seed of the entire experiment
 
 
 ## Structure

@@ -5,7 +5,6 @@ import atari_py
 import cv2
 import numpy as np
 import torch
-from torch.functional import Tensor
 
 from envs import BaseEnv
 
@@ -23,11 +22,11 @@ class AtariALE(BaseEnv):
     @staticmethod
     def get_args():
         parser = argparse.ArgumentParser(description="atari parser")
-        parser.add_argument("--screen-size", type=int, default=84, \
+        parser.add_argument("--screen_size", type=int, default=84, \
             help="clip the image into L*L squares")
-        parser.add_argument("--sliding-window", type=int, default=4, \
+        parser.add_argument("--sliding_window", type=int, default=4, \
             help="keep a series of contiguous frames as one observation (represented as a S*L*L tensor)")
-        parser.add_argument("--max-episode-length", type=int, default=10000, \
+        parser.add_argument("--max_episode_length", type=int, default=10000, \
             help="the maximum steps in one episode to enforce an early stop in some case")
         return parser.parse_known_args()[0]
 

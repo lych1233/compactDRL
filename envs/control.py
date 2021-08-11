@@ -5,7 +5,7 @@ import torch
 from envs import BaseEnv
 
 
-class Control(BaseEnv):
+class ClassicControl(BaseEnv):
     """OpenAI Gym Classic Control environment wrapper
     """  
     def __init__(self, env):
@@ -28,7 +28,7 @@ class Control(BaseEnv):
         return obs
     
     def step(self, action):
-        action = self.continuous_action_space(action, self.continuous)
+        action = self.get_proper_action(action, self.continuous_action_space)
         if self.continuous:
             action = self.action_mu + action * self.action_scale
         obs, reward, done, info = self.env.step(action)

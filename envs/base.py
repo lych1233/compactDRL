@@ -5,6 +5,9 @@ class BaseEnv(object):
         2) explicit tell if the env is continuous
         3) maintain n_obs = observation shape,
                     n_act = action space dimension (or number of actions in discrete case)
+           note!! one important thing here is to always use int-type n_obs if the observation
+           is supposed to be a vector, because later we will assmue any env with n_obs in a
+           tuple shape should be mathced with a CNN model rather than a MLP model
     
     We modify the action space so that:
         1) action \in [1, N] for a discrete environment

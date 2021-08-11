@@ -11,8 +11,9 @@ class BaseBuffer(object):
     @staticmethod
     def get_args():
         parser = argparse.ArgumentParser(description="buffer parser")
-        parser.add_argument("--buffer-type", default="dequeue", choices=["dequeue", "reservoir"])
-        parser.add_argument("--buffer-capacity", default=4096, type=int, \
+        parser.add_argument("--buffer_type", default="dequeue", choices=["dequeue", "reservoir"], \
+            help="the way to kick out old data when the buffer is full")
+        parser.add_argument("--buffer_capacity", default=4096, type=int, \
             help="the maximum number of trainsitions the buffer can hold")
         return parser.parse_known_args()[0]
     

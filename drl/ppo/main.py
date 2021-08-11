@@ -61,9 +61,9 @@ def get_args():
         help="provide files storing pretrained models, or the training will be from scratch")
     parser.add_argument("--save_dir", default="/results/", type=str, \
         help="the folder where models and training statictis will be saved")
-    parser.add_argument("--render", action="store_true", \
+    parser.add_argument("--render", default=False, action="store_true", \
         help="render the enviroment during test time")
-    parser.add_argument("--test", action="store_true", \
+    parser.add_argument("--test", default=False, action="store_true", \
         help="purely evaluate an agent without any training")
     parser.add_argument("--test_times", default=10, type=int, \
         help="number of episodes to do a test")

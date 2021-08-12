@@ -34,8 +34,6 @@ def get_args():
     return parser.parse_known_args()[0]
 
 args = get_args()
-
-env = envs.make_env(args)
 np.random.seed(args.seed)
 torch.manual_seed(np.random.randint(1e9))
 if torch.cuda.is_available():
@@ -44,6 +42,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 
+env = envs.make_env(args)
 buffer = buffers.make_buffer(args, env, device)
 
 if args.algo == "dqn":

@@ -2,6 +2,7 @@ import argparse
 import os
 from copy import deepcopy
 
+import numpy as np
 import torch
 import tqdm
 
@@ -76,15 +77,18 @@ def get_args():
     return parser.parse_args()
 
 def test(args, agent, env):
-    score = 0
-    state = env.reset()
-    for _ in range(args.max_episode_length):
-        action = agent.act(state, deterministic=True)
-        state, reward, done, info = env.step(action)
-        if args.render: env.render()
-        score += reward
-        if done: break
-    return score
+    score_list = []
+    for _ in range(args.test_times):
+        state = env.reset()
+        score = 0
+        for __ in range(args.max_episode_length):
+            action = agent.act(state, deterministic=True)
+            state, reward, done, info = env.step(action)
+            if args.render: env.render()
+            score += reward
+            if done: break
+        score_list.append(score)
+    return np.mean(score_list), score_list
 
 def run(env, device, buffer):
     args = get_args()
@@ -98,12 +102,8 @@ def run(env, device, buffer):
         agent.load(os.path.join(os.getcwd(), args.load_file))
     save_dir = os.path.join(os.getcwd(), args.save_dir)
     if args.test:
-        avg_score = 0
-        for _ in range(args.test_times):
-            score = test(args, agent, test_env)
-            print("episode #{}: score = {:.2f}".format(_, score))
-            avg_score += score
-        avg_score /= args.test_times
+        avg_score, score_list = test(args, agent, test_env)
+        print("score in last ten episodes: {}".format(score_list))
         print("")
         print("avg score = {:.2f}".format(avg_score))
         return
@@ -116,26 +116,25 @@ def run(env, device, buffer):
         buffer.clearall()
         obs = env.reset()
         for _ in range(args.sample_steps):
+            
             total_step += 1
             tqdm_bar.update(1)
-            if args.checkpoint_interval > 0 and total_step % args.checkpoint_interval == 0:
+            
+            if total_step % args.test_interval == 0:
+                avg_score, score_list = test(args, agent, test_env)
+                if avg_score > best_avg_score or best_avg_score is None:
+                    best_avg_score = avg_score
+                    agent.save(save_dir, "best")
+                print("---------- current score / best score = {:.2f} / {:.2f}".format(avg_score, best_avg_score))
+            if total_step % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
                 agent.save(save_dir, "checkpoint_{}".format(total_step))
+        
         tqdm_bar.set_description("Epoch #{}: ".format(epoch))
-        if epoch % args.test_interval == 0:
-            avg_score = 0
-            for _ in range(args.test_times):
-                score = test(args, agent, test_env)
-                avg_score += score
-            avg_score /= args.test_times
-            if best_avg_score is None or avg_score > best_avg_score:
-                best_avg_score = avg_score
-                agent.save(save_dir, "best")
-            print("---------- current score / best score = {:.2f} / {:.2f}".format(avg_score, best_avg_score))
         torch.save(stats, os.join(save_dir, "stats.pt"))
 
 def argument_complement(parser):
-    """The purpose of this is to complete the argument, so that we can use a complete parser 
-    to check if there is any typo in the command line
+    """The purpose of this function is to complete the argument,
+    so that we can use a complete parser to check if there is any typo in the command line
     """
     # Base configuration
     parser.add_argument("--exp_name", default="unnamed", type=str, \

@@ -1,7 +1,7 @@
 # *(To Be Continued ...)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
 
 
-## Two goal of this implementation:
+## The Goal of This Implementation:
 
 - Provide easy to read/learn code, avoiding nesting over nesting
 - The code compactly presents the core of those algorithms
@@ -29,6 +29,7 @@
 
 
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
+- Currently it only supports environments with either simple discrete action space of one dimension or vectorized continuous action space, and paralleled environment interaction is not supported
 
 
 

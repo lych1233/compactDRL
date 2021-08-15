@@ -11,11 +11,24 @@
 ## Quick Facts you should know about this implementation:
 
 - All the core codes are presented in the /drl/"algo name"/ folder, which might be friendly for the reader
-- Trick usage is as minimized as possible
-- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage)
 - You chould use commands in the /scripts/ folder to start an experiment directly
+- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage)
 - In an experiment, "run.py" will first find suitable "env" and "buffer" for the given environment. Then "run.py" passes them to "algo/main" and "algo/main" will use the "env" and "buffer" and all local utils to finish the experiment
-- **Every** specific configuration (hyper-parameter) has a description. The basic configuration explanation in run.py; the environment(buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/main.py
+
+
+
+## Project Feature (Pros & Cons)
+
+#### Spotlight
+
+
+- Trick usage is as minimized as possible
+- Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation in run.py; the environment(buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/main.py
+
+#### Limitation
+
+
+- Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
 
 
 

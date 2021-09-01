@@ -13,7 +13,7 @@
 - All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
 - You chould use commands in the scripts/ folder to start an experiment directly
 - To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage)
-- In an experiment, "run.py" will first find suitable "env" and "buffer" for the given environment. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
+- In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
 
 
 

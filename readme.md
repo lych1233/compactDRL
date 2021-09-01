@@ -31,6 +31,7 @@
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
 - Currently it only supports environments with either simple discrete action space of one-dimensional vectorized continuous action space
 - Parallel environmental interaction is not supported
+- RNN-based models are not used
 
 
 

@@ -66,7 +66,7 @@ where 0 is the gpu id and 1 is the seed of the entire experiment
         ├── policy_gradient_agents
         └── stochastic_policy_search_agents 
     ├── envs   // Environments
-        ├── control.py // Environments
+        ├── control.py
         ├── atari.py
         └── base.py
     ├── buffers   // (purely for storage) Buffers 

@@ -22,7 +22,7 @@
 #### Spotlight
 
 
-- Trick usage is as minimized as possible
+- Implementation trick usage is as minimized as possible, while keeping those tricks that significantly improves the performance
 - Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
 
 #### Limitation

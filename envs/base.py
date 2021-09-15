@@ -1,10 +1,13 @@
-class BaseEnv(object):
+from abc import ABC
+
+
+class BaseEnv(ABC):
     """Documentation
     The environment direct inherits OpenAI Gym API with these additional functions:
         1) explicit train/eval mode change
         2) explicit tell if the env is continuous
         3) maintain n_obs = observation shape,
-                    n_act = action space dimension (or number of actions in discrete case)
+                    n_act = action space dimension (or number of actions for discrete env)
            note!! one important thing here is to always use int-type n_obs if the observation
            is supposed to be a vector, because later we will assmue any env with n_obs in a
            tuple shape should be mathced with a CNN model rather than a MLP model
@@ -13,9 +16,7 @@ class BaseEnv(object):
         1) action \in [1, N] for a discrete environment
         2) action \in [-1, 1]^d for a continuous environment
     unless an additional declarification is made
-
-    You may transfer any type of actions (int/float, np.ndarray, torch.Tensor, list, tuple)
-    and the environment will change it to a proper one if possible
+    And we expect to get a one-dimensional numpy array as the input to the step method
     
     Method  |  Description
     ---------------------------------------------------------------------------
@@ -36,12 +37,20 @@ class BaseEnv(object):
 
     def step(self, action):
         raise NotImplementedError
+        return next_obs, reward, done, env_info
 
     def render(self):
         raise NotImplementedError
+        return image_visualization
 
     def close(self):
         raise NotImplementedError
+
+    def train(self):
+        self.training = True
+
+    def eval(self):
+        self.training = False
     
     @property
     def continuous(self):
@@ -50,13 +59,3 @@ class BaseEnv(object):
     @property
     def discrete(self):
         return not self.continuous_action_space
-
-    def train(self):
-        self.training = True
-
-    def eval(self):
-        self.training = False
-    
-    @staticmethod
-    def get_proper_action(action):
-        return action

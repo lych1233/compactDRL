@@ -3,3 +3,6 @@ results
 *.pyc
 .vscode
 *_test*
+wandb
+_*.sh
+_*.py

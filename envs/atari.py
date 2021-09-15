@@ -4,9 +4,8 @@ from collections import deque
 import atari_py
 import cv2
 import numpy as np
-import torch
 
-from envs import BaseEnv
+from .base import BaseEnv
 
 
 class AtariALE(BaseEnv):
@@ -30,7 +29,7 @@ class AtariALE(BaseEnv):
             help="the maximum steps in one episode to enforce an early stop in some case")
         return parser.parse_known_args()[0]
 
-    def __init__(self, env):
+    def __init__(self, env, seed):
         super(AtariALE, self).__init__()
         args = self.get_args()
 
@@ -38,7 +37,7 @@ class AtariALE(BaseEnv):
         self.ale.setFloat("repeat_action_probability", 0)
         self.ale.setInt("frame_skip", 0)
         self.ale.setBool("color_averaging", False)
-        self.ale.setInt("random_seed", np.random.randint(1e9))
+        self.ale.setInt("random_seed", seed)
         self.ale.setInt("max_num_frames_per_episode", args.max_episode_length)
         self.ale.loadROM(atari_py.get_game_path(env))  # This should be after setting all parameters
 
@@ -72,7 +71,7 @@ class AtariALE(BaseEnv):
         return np.stack(list(self.observation), 0)
 
     def step(self, action):
-        action = self.get_proper_action(action)
+        action = action.item()
         frames = np.zeros((2, self.side_len, self.side_len), dtype=np.float32)
         reward, done = 0, False
         for _ in range(4):
@@ -94,18 +93,8 @@ class AtariALE(BaseEnv):
     def render(self):
         cv2.imshow("screen", self.ale.getScreenRGB()[:, :, ::-1])
         cv2.waitKey(1)
+        return self.ale.getScreenRGB()[:, :, ::-1]
 
     def close(self):
         cv2.destroyAllWindows()
-    
-    @staticmethod
-    def get_proper_action(action):
-        if isinstance(action, (np.ndarray, torch.Tensor)):
-            action = action.item()
-        if isinstance(action, (list, tuple)):
-            action = np.array(action).item()
-        if isinstance(action, int):
-            return action
-        else:
-            raise TypeError("Only single value with type [int, np.ndarray, torch.Tensor, list, tuple] is allowed")
-    
+        return None

@@ -1,7 +1,6 @@
-CUDA_VISIBLE_DEVICES=$1 python run.py \
+export OMP_NUM_THREADS=4 && CUDA_VISIBLE_DEVICES=$1 python run.py \
     --exp_name $0 --seed $2 \
     --env_type control --env CartPole-v1 \
     --algo ppo \
-    --policy_lr 0.001 \
-    --sample_steps 1024 --buffer_capacity 1024 \
-    --hidden_dim 64
+    --num_T 1000000 --sample_steps 4096 --test_interval 10000 \
+    --lam 0.97 --buffer_capacity 4096

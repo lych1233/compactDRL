@@ -1,80 +1,14 @@
-import argparse
 import os
-from copy import deepcopy
+from collections import defaultdict
+import warnings
 
 import numpy as np
 import torch
 import tqdm
 
 from .agent import PPOAgent
+from .config import get_args
 
-
-def get_args():
-    """PPO core hyper-parameters    
-    ---------------------------------------------------------------------------
-    TODO
-    
-    More parameters for record, test and other stuffs
-    ---------------------------------------------------------------------------
-    load_file    |   provide files storing pretrained models, or the training will be from scratch
-    save_dir     |   help="the folder where models and training statictis will be saved
-    render       |   render the enviroment during test time
-    test         |   purely evaluate an agent without any training
-    test_times   |   number of episodes to do a test
-    test_interval         |   number of epochs between two tests
-    checkpoint_interval   |   number of interaction steps to save a model backup when it > 0
-
-    And there are some additional hyper-parameters specific for CNN architecture defined in
-    the argument_complement function
-    ---------------------------------------------------------------------------
-    channel_divider   |   reduce channels by a divider in each layer from top to bottom
-    kernel_size       |   a list of kernel sizes in each layer from top to bottom
-    stride            |   a list of stride values in each layer from top to bottom
-    """
-    parser = argparse.ArgumentParser(description="ppo parser")
-    parser.add_argument("--policy_lr", default=3e-4, type=float, \
-        help="the learning rate of the policy network")
-    parser.add_argument("--critic_lr", default=1e-3, type=float, \
-        help="the learning rate of the critic network")
-    parser.add_argument("--gamma", default=0.99, type=float, \
-        help="discounting factor γ for future reward")
-    parser.add_argument("--lam", default=0.95, type=float, \
-        help="discounting factor λ for generalized advantage estimate")
-    parser.add_argument("--clip_ration", default=0.2, type=float, \
-        help="ppo clipping parameter")
-    parser.add_argument("--entropy_bonus", default=0, type=float, \
-        help="coefficient for the entropy term in the objective function")
-    parser.add_argument("--target_kl", default=0.01, type=float, \
-        help="early stoping if KL divergence between old/new polices exceeds a threshold")
-    parser.add_argument("--hidden_dim", default=256, type=int, \
-        help="number of hidden nodes per mlp layer/channels per cnn layer")
-    parser.add_argument("--num_epoch", default=500, type=int, \
-        help="number of ppo epochs to train an agent")
-    parser.add_argument("--sample_steps", default=2048, type=int, \
-        help="number of environment-interacting (sampling) steps in one ppo epoch")
-    parser.add_argument("--reuse_times", default=4, type=int, \
-        help="reuse the sampled data for multiple times for data efficiency")
-    parser.add_argument("--num_minibatch", default=1, type=int, \
-        help="split the whole data into a few minibatches during learning")
-
-    # Other necessary parameters for a complete experiment
-    parser.add_argument("--load_file", default=None, type=str, \
-        help="provide files storing pretrained models, or the training will be from scratch")
-    parser.add_argument("--save_dir", default="/results/", type=str, \
-        help="the folder where models and training statictis will be saved")
-    parser.add_argument("--render", default=False, action="store_true", \
-        help="render the enviroment during test time")
-    parser.add_argument("--test", default=False, action="store_true", \
-        help="purely evaluate an agent without any training")
-    parser.add_argument("--test_times", default=10, type=int, \
-        help="number of episodes to do a test")
-    parser.add_argument("--test_interval", default=10, type=int, \
-        help="number of epochs between two tests")
-    parser.add_argument("--checkpoint_interval", default=-1, type=int, \
-        help="number of interaction steps to save a model backup when it > 0")
-
-    argument_complement(parser)
-    return parser.parse_args()
 
 def test(args, agent, env):
     score_list = []
@@ -82,90 +16,96 @@ def test(args, agent, env):
         state = env.reset()
         score = 0
         for __ in range(args.max_episode_length):
-            action = agent.act(state, deterministic=True)
+            action = agent.act(np.expand_dims(state, 0), deterministic=True)
             state, reward, done, info = env.step(action)
-            if args.render: env.render()
+            if args.render:
+                env.render()
             score += reward
-            if done: break
+            if done:
+                break
         score_list.append(score)
     return np.mean(score_list), score_list
 
-def run(env, device, buffer):
+def run(env, test_env, device, buffer):
     args = get_args()
+    if args.sample_steps % args.num_env != 0:
+        import warnings
+        warnings.warn("{} transitions will be dispelled due to vectorized environment cutting off".format(args.sample_steps % args.num_env))
+        args.sample_steps -= args.sample_steps % args.num_env
     if args.algo != "ppo":
         raise ValueError("unexpected envoking with algorithm not set to be ppo")
     
-    test_env = deepcopy(env)
     test_env.eval()
     agent = PPOAgent(args, env, device)
     if args.load_file is not None:
         agent.load(os.path.join(os.getcwd(), args.load_file))
-    save_dir = os.path.join(os.getcwd(), args.save_dir)
+    
     if args.test:
         avg_score, score_list = test(args, agent, test_env)
-        print("score in last ten episodes: {}".format(score_list))
-        print("")
+        print("score in last ten episodes: {}".format(score_list[-10:]))
         print("avg score = {:.2f}".format(avg_score))
         return
+    
+    save_dir = os.path.join(os.getcwd(), args.save_dir, args.exp_name + "_seed_" + str(args.seed))
+    os.makedirs(save_dir, exist_ok=True)
+    stats = defaultdict(list)
+    if args.wandb_show:
+        from .logger import wandb_init
+        wandb_init(args, save_dir)
 
-    tqdm_bar = tqdm.tqdm(range(1, 1 + args.num_epoch * args.sample_steps))
-    best_avg_score = None
-    stats = {}
-    total_step = 0
-    for epoch in range(1, args.num_epoch):
+    tqdm_bar = tqdm.tqdm(range(1, 1 + args.num_T), ncols=120)
+    num_epoch = args.num_T // args.sample_steps + 1
+    obs, cur_score, best_avg_score = env.reset(), np.zeros(args.num_env), -1e100
+    T, episode_len = 0, np.zeros(args.num_env, dtype=int)
+    for epoch in range(1, 1 + num_epoch):
         buffer.clearall()
-        obs = env.reset()
-        for _ in range(args.sample_steps):
+        agent.lr_decay(args, epoch - 1, num_epoch)
+        for _ in range(args.sample_steps // args.num_env):
+            if T < args.num_T:
+                tqdm_bar.update(min(args.num_env, args.num_T - T))
+            T += args.num_env
             
-            total_step += 1
-            tqdm_bar.update(1)
+            episode_len += 1
+            action = agent.act(obs)
+            next_obs, reward, done, info = env.step(action)
+            cur_score += reward
+            buffer.add(obs, action, reward, done)
+            obs = next_obs
+            if np.any(done):
+                new_score, new_episode = cur_score[done].mean().item(), episode_len[done].mean().item()
+                for env_score in cur_score[done]:
+                    stats["all_score"].append(env_score)
+                stats["T_score_pair"].append((T, new_score))
+                stats["T_episode_len_pair"].append((T, new_episode))
+                if args.wandb_show:
+                    from .logger import log
+                    log("env", T, {"training score": new_score})
+                    log("env", T, {"episode length": new_episode})
+                cur_score[done] = 0
+                episode_len[done] = 0
             
-            if total_step % args.test_interval == 0:
+            if T % args.test_interval == 0:
                 avg_score, score_list = test(args, agent, test_env)
-                if avg_score > best_avg_score or best_avg_score is None:
+                if avg_score > best_avg_score:
                     best_avg_score = avg_score
-                    agent.save(save_dir, "best")
-                print("---------- current score / best score = {:.2f} / {:.2f}".format(avg_score, best_avg_score))
-            if total_step % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
-                agent.save(save_dir, "checkpoint_{}".format(total_step))
+                    agent.save(save_dir, "best.pt")
+                print("\n----- current score / best score = {:.2f} / {:.2f} -----\n".format(avg_score, best_avg_score))
+                print(stats["learn_stats"][-1])
+                print("")
+                if args.wandb_show:
+                    from .logger import log
+                    log("env", T, {"testing score": avg_score})
+            if T % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
+                agent.save(save_dir, "checkpoint_{}.pt".format(T))
         
-        tqdm_bar.set_description("Epoch #{}: ".format(epoch))
-        torch.save(stats, os.join(save_dir, "stats.pt"))
-
-def argument_complement(parser):
-    """The purpose of this function is to complete the argument,
-    so that we can use a complete parser to check if there is any typo in the command line
-    """
-    # Base configuration
-    parser.add_argument("--exp_name", default="unnamed", type=str, \
-        help="the name of the experiment; the result will be saved at results/exp_name by default")
-    parser.add_argument("--seed", default=0, type=int, \
-        help="random seed of the whole experiment under which the result should be the same")
-    parser.add_argument("--env_type", default="control", choices=["control", "atari", "mujoco"], \
-        help="the type of the environment, with relative code and annotation at envs/env_type.py")
-    parser.add_argument("--env", default="CartPole-v1", type=str, help="environment to interact with")
-    parser.add_argument("--algo", default="dqn", \
-        choices=["dqn", "vpg", "ddpg", "rainbow", "ppo", "td3", "sac"], \
-        help="deep learning algorithm to choose")
+        learn_stats = agent.learn(args, buffer, obs, T)
+        stats["learn_stats"].append(learn_stats)
+        
+        tqdm_bar.set_description(
+            "Epoch #{}, T #{} | Rolling: {:.2f}".format(
+            epoch, T, np.mean(stats["all_score"][-20:])))
+        torch.save(stats, os.path.join(save_dir, "stats.pt"))
     
-    # Atari ALE configuration
-    parser.add_argument("--screen_size", type=int, default=84, \
-        help="clip the image into L*L squares")
-    parser.add_argument("--sliding_window", type=int, default=4, \
-        help="keep a series of contiguous frames as one observation (represented as a S*L*L tensor)")
-    parser.add_argument("--max_episode_length", type=int, default=10000, \
-        help="the maximum steps in one episode to enforce an early stop in some case")
-    
-    # Buffer configuration
-    parser.add_argument("--buffer_type", default="dequeue", choices=["dequeue", "reservoir"], \
-        help="the way to kick out old data when the buffer is full")
-    parser.add_argument("--buffer_capacity", default=4096, type=int, \
-        help="the maximum number of trainsitions the buffer can hold")
-    
-    # CNN architecture hyper-parameters
-    parser.add_argument("--channel_divider", default="2,1,1", type=str, \
-        help="reduce channels by a divider in each layer from top to bottom")
-    parser.add_argument("--kernel_size", default="8,4,3", type=str, \
-        help="a list of kernel sizes in each layer from top to bottom")
-    parser.add_argument("--stride", default="4,2,1", type=str, \
-        help="a list of stride values in each layer from top to bottom")
+    if args.wandb_show:
+        from .logger import wandb_finish
+        wandb_finish()

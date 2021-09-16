@@ -12,7 +12,7 @@
 
 - All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
 - You chould use commands in the scripts/ folder to start an experiment directly
-- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage)
+- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage), and all other works can be done by algorithm local files
 - In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
 
 
@@ -22,7 +22,7 @@
 #### Spotlight
 
 
-- Implementation trick usage is as minimized as possible, while keeping those tricks that significantly improves the performance
+- Implementation trick usage is pruned, while keeping those tricks that significantly affect the performance
 - Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
 
 #### Limitation
@@ -30,9 +30,8 @@
 
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
 - Currently it only supports environments with either simple discrete action space of one-dimensional vectorized continuous action space
-- Parallel environmental interaction is not supported
-- RNN-based models are not used
-
+- RNN-based models are not suportted due to simplicity
+- 
 
 
 ## Run
@@ -59,12 +58,15 @@ where 0 is the gpu id and 1 is the seed of the entire experiment
 
 ## Structure
 
-    ├── drl   // Different algorithms             
+    ├── drl   // Different algorithms
+        ├── vpg // Use vpg for illustration, others follow exactly the same structure
+            ├── main.py // Basic controller
+            ├── agnet.py // An ppo agent including both deciding part and learning part
+            ├── config.py // Complete configuration and hyperparameter
+            ├── logger.py // A simple logger for w&b
+            └── other vpg stuffs
         ├── ppo
-            ├── other ppo stuffs
-            └── main.py
-        ├── policy_gradient_agents
-        └── stochastic_policy_search_agents 
+        └── sac
     ├── envs   // Environments
         ├── control.py
         ├── atari.py

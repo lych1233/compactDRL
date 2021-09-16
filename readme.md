@@ -77,3 +77,11 @@ TODO
     ├── results
     └── run.py
 
+
+
+
+## Refenrences
+
+- The best deep reinforcement learning turorial I've found: [OpenAI Spinning Up](https://spinningup.openai.com/en/latest/)
+- Spinning Up's easy-to-follow code: [Spinning Up Code](https://github.com/openai/spinningup)
+- The highest quality pytorch-version baseline I've found: [Stable-Baselines 3](https://github.com/DLR-RM/stable-baselines3)

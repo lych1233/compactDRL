@@ -11,8 +11,8 @@
 ## Quick Facts you should know about this implementation:
 
 - All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
-- You chould use commands in the scripts/ folder to start an experiment directly
-- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage), and all other works can be done by algorithm local files
+- You could use commands in the scripts/ folder to start an experiment directly
+- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and a buffer file (which is used **solely** for storage), and all other works can be done by algorithm local files
 - In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
 
 
@@ -29,9 +29,9 @@
 
 
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
+- Hyperparameters are not tuned carefully, but they are set safely and areuniversal to similar environments
 - Currently it only supports environments with either simple discrete action space of one-dimensional vectorized continuous action space
-- RNN-based models are not suportted due to simplicity
-- 
+- RNN-based models are not suportted to make an elegant implementation (or maybe due to my limited coding skills)
 
 
 ## Run
@@ -46,13 +46,11 @@ cd compactDRL
 bash scripts/ppo/CartPole.sh 0 1
 ```
 
-where 0 is the gpu id and 1 is the seed of the entire experiment
+where "0" is the PGU-id, and "1" is the seed of the entire experiment
 
 #### Arg/Config One Should Notice for A Complete Experiment
 
-
-- **exp_name** the name of the experiment
-- **algo** the algorithm to choose
+TODO
 
 
 

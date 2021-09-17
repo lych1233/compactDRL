@@ -36,6 +36,18 @@
 
 ## Run
 
+#### Requirements
+
+
+
+Only the core drl python packages are needed, use
+
+```
+pip install -r requirements.txt
+```
+
+installs a valid set of packages, but the results may slighted differ from what we've shown as different versions are used during our training
+
 #### Quick Start (An Running Script Example)
 
 
@@ -49,6 +61,8 @@ bash scripts/ppo/CartPole.sh 0 1
 where "0" is the PGU-id, and "1" is the seed of the entire experiment
 
 #### Arg/Config One Should Notice for A Complete Experiment
+
+
 
 TODO
 

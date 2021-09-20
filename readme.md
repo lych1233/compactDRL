@@ -29,9 +29,9 @@
 
 
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
-- Hyperparameters are not tuned carefully, but they are set safely and areuniversal to similar environments
-- Currently it only supports environments with either simple discrete action space of one-dimensional vectorized continuous action space
-- RNN-based models are not suportted to make an elegant implementation (or maybe due to my limited coding skills)
+- Hyperparameters are not tuned carefully, but they are set to be safe and universal for the same scenario 
+- Currently it only supports environments with either simple discrete action space or one-dimensional vectorized continuous action space
+- RNN-based models are not suportted for an elegant implementation (becasue of my limited coding skills)
 
 
 ## Run
@@ -82,10 +82,12 @@ TODO
     ├── envs   // Environments
         ├── control.py
         ├── atari.py
+        ├── mujoco.py
         └── base.py
     ├── buffers   // (purely for storage) Buffers 
         ├── normal_buffer.py
         ├── image_buffer.py
+        ├── vector_buffer
         └── base.py 
     ├── scripts
     ├── results
@@ -98,4 +100,4 @@ TODO
 
 - The best deep reinforcement learning turorial I've found: [OpenAI Spinning Up](https://spinningup.openai.com/en/latest/)
 - Spinning Up's easy-to-follow code: [Spinning Up Code](https://github.com/openai/spinningup)
-- The baseline of the highest quality in pytorch that I've found and : [Stable-Baselines 3](https://github.com/DLR-RM/stable-baselines3)
+- The baseline of the highest quality in pytorch that I've found: [Stable-Baselines 3](https://github.com/DLR-RM/stable-baselines3)

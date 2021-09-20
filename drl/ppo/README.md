@@ -31,6 +31,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 
 ### Some Implementation Lessons
 
-- Observation normalization is almost always harmless and it is often helpful for better performance, and especially critial for some environments like "MountainCar-v0"
+- Observation normalization is almost always harmless for vectorized input and it is often helpful for better performance, and especially critial for some environments like "MountainCar-v0"
+- Reward/Value normalization helps fast fitting, but one should keep an eye on the its potential harm to the performance (usually it's harmless)
 - Always use **tanh** instead of **ReLU** for MLP! Otherwise you may fail in "MountainCar-v0". Plus, it is also benenicial as shown by [a study of GoogleBrain](https://arxiv.org/abs/2006.05990)
 - Share the CNN feature extractor for the actor and the critic, or you will fail in "pong" unless a extremely tiny learning rate is used. Sharing CNN accelarates training a lot

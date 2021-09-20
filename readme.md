@@ -22,7 +22,7 @@ pip install -r requirements.txt
 
 but the results may slightly differ from what we've shown as different versions are used during our training
 
-> Additional packages are needed for each scenario like Atari or MuJoCo.
+> Additional packages are needed for scenarios like Atari or MuJoCo.
 
 #### Quick Start (An Running Script Example)
 

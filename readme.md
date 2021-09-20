@@ -8,6 +8,42 @@
 
 
 
+## Run
+
+#### Requirements
+
+
+
+All required packages are mostly used for DRL in pytorch. One can also build up the environment by:
+
+```
+pip install -r requirements.txt
+```
+
+but the results may slightly differ from what we've shown as different versions are used during our training
+
+> Additional packages are needed for each scenario like Atari or MuJoCo.
+
+#### Quick Start (An Running Script Example)
+
+
+- To start an example experiment, say, use PPO to train an agent in the "CartPole-v1'' environment, you can direct use:
+
+```
+cd compactDRL
+bash scripts/ppo/CartPole.sh 0 1
+```
+
+where "0" is the PGU-id, and "1" is the seed of the entire experiment
+
+#### Arg/Config One Should Notice for A Complete Experiment
+
+
+
+TODO
+
+
+
 ## Quick Facts you should know about this implementation:
 
 - All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
@@ -32,40 +68,6 @@
 - Hyperparameters are not tuned carefully, but they are set to be safe and universal for the same scenario 
 - Currently it only supports environments with either simple discrete action space or one-dimensional vectorized continuous action space
 - RNN-based models are not suportted for an elegant implementation (becasue of my limited coding skills)
-
-
-## Run
-
-#### Requirements
-
-
-
-Only the core drl python packages are needed, use
-
-```
-pip install -r requirements.txt
-```
-
-installs a valid set of packages, but the results may slighted differ from what we've shown as different versions are used during our training
-
-#### Quick Start (An Running Script Example)
-
-
-- To start an example experiment, say, use PPO to train an agent in the "CartPole-v1'' environment, you can direct use:
-
-```
-cd compactDRL
-bash scripts/ppo/CartPole.sh 0 1
-```
-
-where "0" is the PGU-id, and "1" is the seed of the entire experiment
-
-#### Arg/Config One Should Notice for A Complete Experiment
-
-
-
-TODO
-
 
 
 ## Structure

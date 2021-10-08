@@ -1,5 +1,18 @@
 # *(To Be Continued ...)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
 
+| Algorithms |  |
+| :--------: | :---------------: |
+| dqn | :x: |
+| a2c | Working On... |
+| ddpg | :x: |
+| ppo | :heavy_check_mark: |
+| rainbow | :x: |
+| td3 | :x: |
+| sac | :x: |
+
+The hyperparameters are not fine tuned, but we garuantee a acceptable performance with a safe setting of hyperparameters.
+
+
 
 ## The Goal of This Implementation:
 

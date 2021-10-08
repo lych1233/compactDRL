@@ -10,7 +10,7 @@
 | td3 | :x: |
 | sac | :x: |
 
-The hyperparameters are not fine tuned, but we garuantee a acceptable performance with a safe setting of hyperparameters.
+The hyperparameters are not fine tuned, but we garuantee an acceptable performance with a safe setting of hyperparameters.
 
 
 
@@ -73,6 +73,7 @@ TODO
 
 - Implementation trick usage is pruned, while keeping those tricks that significantly affect the performance
 - Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
+- Acceptable performance on the most common benchmark environments in research: Atari (for discrete) and MuJoCo (for continuous), as other elegant implementation are usually not tested on all of them
 
 #### Limitation
 

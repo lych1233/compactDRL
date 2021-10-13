@@ -7,4 +7,6 @@ wandb
 _*.sh
 *.py
 _*.py
-_ppo
+_ppo**
+_s_gv_pong**
+_spin**

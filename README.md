@@ -14,6 +14,22 @@ The hyperparameters are not fine tuned, but we garuantee an acceptable performan
 
 
 
+## Performance
+
+### Pong (Atari)
+
+
+![pong](pong.png)
+
+
+
+### Hopper (MuJoCo)
+
+
+![Hopper](Hopper.png)
+
+
+
 ## The Goal of This Implementation:
 
 - Provide easy to read/learn code, avoiding nesting over nesting
@@ -49,15 +65,12 @@ bash scripts/ppo/CartPole.sh 0 1
 
 where "0" is the PGU-id, and "1" is the seed of the entire experiment
 
-#### Arg/Config One Should Notice for A Complete Experiment
-
-
-
-TODO
+See README in each drl/algo folder for some tips for a specific algorithm
 
 
 
 ## Quick Facts you should know about this implementation:
+
 
 - All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
 - You could use commands in the scripts/ folder to start an experiment directly
@@ -71,7 +84,7 @@ TODO
 #### Spotlight
 
 
-- Implementation trick usage is pruned, while keeping those tricks that significantly affect the performance
+- Implementation trick usage is pruned, while those tricks that significantly affect the performance are kept
 - Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
 - Acceptable performance on the most common benchmark environments in research: Atari (for discrete) and MuJoCo (for continuous), as other elegant implementation are usually not tested on all of them
 
@@ -87,12 +100,12 @@ TODO
 ## Structure
 
     ├── drl   // Different algorithms
-        ├── vpg // Use vpg for illustration, others follow exactly the same structure
+        ├── a2c // Use a2c for illustration, others follow exactly the same structure
             ├── main.py // Basic controller
-            ├── agnet.py // An ppo agent including both deciding part and learning part
+            ├── agent.py // An ppo agent including both deciding part and learning part
             ├── config.py // Complete configuration and hyperparameter
             ├── logger.py // A simple logger for w&b
-            └── other vpg stuffs
+            └── other a2c stuffs (usually there is a nn_blocks.py for building basic neural networks)
         ├── ppo
         └── sac
     ├── envs   // Environments

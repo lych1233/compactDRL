@@ -16,7 +16,6 @@ class VectorBuffer(BaseBuffer):
         args = self.get_args()
         self.kicking = args.buffer_type
         self.n, self.S, self.L = num_env, args.buffer_capacity // num_env, 0
-        print(self.n, self.S)
         self.discrete = env.discrete
         self.cur = 0 # The cursor locates at the idex of the next upcoming data
         

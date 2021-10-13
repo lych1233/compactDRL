@@ -9,6 +9,7 @@ class ClassicControl(BaseEnv):
     """
     
     def __init__(self, env, seed):
+        super(ClassicControl, self).__init__()
         self.env = gym.make(env)
         self.env.seed(seed)
         action_space = self.env.action_space
@@ -21,7 +22,7 @@ class ClassicControl(BaseEnv):
             self.action_scale = 0.5 * (action_space.high - action_space.low)
             self.action_mu = 0.5 * (action_space.high + action_space.low)
         obs_space = self.env.observation_space
-        self.n_obs = obs_space.shape[0]
+        self.n_obs = obs_space.shape
 
     def reset(self):
         obs = self.env.reset()

@@ -8,7 +8,7 @@ from torch.nn.utils import clip_grad_norm_
 from .nn_blocks import ActorCritic
 
 
-class PPOAgent(object):
+class A2CAgent(object):
     @staticmethod
     def discounted_backward_sum(v, done, k=1):
         for i in range(len(v) - 2, -1, -1):
@@ -29,18 +29,15 @@ class PPOAgent(object):
         for param_group in self.optimizer.param_groups:
             param_group["lr"] = args.lr * (1 - cur / total)
     
-    def batch_update(self, args, obs, ret, adv, action, old_log_p):
+    def batch_update(self, args, obs, ret, adv, action):
         value = self.policy.get_value(obs).reshape(-1)
         value_loss = ((value - ret) ** 2).mean()
         
         pi = self.policy.get_pi(obs)
         log_p = pi.log_prob(action).reshape(len(ret), -1).sum(-1)
-        ratio = (log_p - old_log_p).exp()
         adv = (adv - adv.mean()) / (adv.std() + 1e-8)
 
-        surr1 = ratio * adv
-        surr2 = ratio.clamp(1 - args.clip_ratio, 1 + args.clip_ratio) * adv
-        policy_loss = -torch.min(surr1, surr2).mean()
+        policy_loss = -(log_p * adv).mean()
         entropy = pi.entropy().mean()
 
         loss = policy_loss + args.value_loss_coef * value_loss + args.entropy_coef * -entropy
@@ -49,9 +46,7 @@ class PPOAgent(object):
         grad_norm = clip_grad_norm_(self.policy.parameters(), args.max_grad_norm)
         self.optimizer.step()
 
-        kl = (old_log_p - log_p).mean().item()
-        clip_fraction = (ratio.gt(1 + args.clip_ratio) | ratio.lt(1 - args.clip_ratio)).to(torch.float32).mean().item()
-        return policy_loss.item(), value_loss.item(), entropy.item(), grad_norm.item(), kl, clip_fraction
+        return policy_loss.item(), value_loss.item(), entropy.item(), grad_norm.item()
     
     def learn(self, args, buffer, last_obs, T):
         S, batch_size = args.sample_steps, args.sample_steps // args.num_minibatch
@@ -70,25 +65,19 @@ class PPOAgent(object):
         ret = torch.tensor(value + adv, dtype=torch.float32, device=self.device)
         adv = torch.tensor(adv, dtype=torch.float32, device=self.device)
 
-        with torch.no_grad():
-            old_pi = self.policy.get_pi(obs)
-        action = torch.as_tensor(data["action"]).to(self.device).view(old_pi.batch_shape)
-        old_log_p = old_pi.log_prob(action).reshape(S, -1).sum(-1)
+        action = torch.as_tensor(data["action"])
+        action = action.to(self.device).view(-1, *action.shape[2:])
 
-        adv, ret, old_log_p = adv.view(-1), ret.view(-1), old_log_p.view(-1)
+        adv, ret = adv.view(-1), ret.view(-1)
         stats = defaultdict(float)
-        for _ in range(args.reuse_times):
-            rand_perm = np.random.permutation(S)
-            for batch_start in range(0, S - batch_size + 1, batch_size):
-                idx = rand_perm[batch_start:batch_start + batch_size]
-                policy_loss, value_loss, entropy, grad_norm, kl, clip_fraction = self.batch_update(args, obs[idx], ret[idx], adv[idx], action[idx], old_log_p[idx])
-                stats["policy_loss"] += policy_loss / args.reuse_times
-                stats["value_loss"] += value_loss / args.reuse_times
-                stats["grad_norm"] += grad_norm / args.reuse_times
-                if _ + 1 == args.reuse_times:
-                    stats["entropy"] += entropy
-                    stats["kl"] += kl
-                    stats["clip_fraction"] += clip_fraction
+        rand_perm = np.random.permutation(S)
+        for batch_start in range(0, S - batch_size + 1, batch_size):
+            idx = rand_perm[batch_start:batch_start + batch_size]
+            policy_loss, value_loss, entropy, grad_norm = self.batch_update(args, obs[idx], ret[idx], adv[idx], action[idx])
+            stats["policy_loss"] += policy_loss
+            stats["value_loss"] += value_loss
+            stats["entropy"] += entropy
+            stats["grad_norm"] += grad_norm
         for k in stats.keys():
             stats[k] /= args.num_minibatch
         if args.wandb_show:

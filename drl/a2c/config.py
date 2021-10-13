@@ -4,19 +4,17 @@ import argparse
 def get_args():
     """This implementation lacks of some useful tricks like observation/value normalization
     
-    PPO core hyper-parameters    
+    A2C (Advantage Actor-Critic, also known as vanilla policy gradient) core hyper-parameters    
     ---------------------------------------------------------------------------
     lr                |   the learning rate of the actor-critic
     gamma             |   discounting factor γ for future reward accumulation
     lam               |   coefficient λ for generalized advantage estimate
-    clip_ratio        |   ppo clipping parameter to constrain policy difference
     value_loss_coef   |   coefficient of the value loss
     entropy_coef      |   coefficient of the entropy term for robust training
     max_grad_norm     |   clip the gradient for stable training
     hidden_dim        |   number of hidden nodes/channels per/cnn mlp layer
     num_T             |   number of interaction steps to train an agent (may affect the learning rate decay
     sample_steps      |   number of environment-interacting (sampling) steps in one training epoch
-    reuse_times       |   reuse the sampled data multiple times for data efficiency
     num_minibatch     |   split the data into a few minibatchs for fasther fitting (may undermine stability
 
     
@@ -46,7 +44,7 @@ def get_args():
     wandb_group      |   the group of the experiment on wandb, should be env_tpye/env if not specified
     wandb_job_type   |   the job_type of the experiment on wandb
     """
-    parser = argparse.ArgumentParser(description="ppo parser")
+    parser = argparse.ArgumentParser(description="a2c parser")
 
     parser.add_argument("--lr", default=1e-4, type=float, \
         help="the learning rate of the actor-critic")
@@ -54,8 +52,6 @@ def get_args():
         help="discounting factor γ for future reward accumulation")
     parser.add_argument("--lam", default=0.95, type=float, \
         help="coefficient λ for generalized advantage estimate")
-    parser.add_argument("--clip_ratio", default=0.25, type=float, \
-        help="ppo clipping parameter to constrain policy difference")
     parser.add_argument("--value_loss_coef", default=0.5, type=float, \
         help="coefficient of the value loss")
     parser.add_argument("--entropy_coef", default=0, type=float, \
@@ -68,8 +64,6 @@ def get_args():
         help="number of interaction steps to train an agent (may affect the learning rate decay")
     parser.add_argument("--sample_steps", default=1024, type=int, \
         help="number of environment-interacting (sampling) steps in one training epoch")
-    parser.add_argument("--reuse_times", default=10, type=int, \
-        help="reuse the sampled data multiple times for data efficiency")
     parser.add_argument("--num_minibatch", default=1, type=int, \
         help="split the data into a few minibatchs for fasther fitting (may undermine stability)")
     

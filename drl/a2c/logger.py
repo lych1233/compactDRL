@@ -14,7 +14,7 @@ def wandb_init(args, save_dir):
         project=args.wandb_project,
         group=group_name,
         job_type=args.wandb_job_type,
-        name="seed_" + str(args.seed) + "_ppo_" + args.env,
+        name="seed_" + str(args.seed) + "_a2c_" + args.env,
         dir=save_dir,
     )
     work_dir = os.getcwd()

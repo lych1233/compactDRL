@@ -25,7 +25,7 @@ class AtariALE(BaseEnv):
             help="clip the image into L*L squares")
         parser.add_argument("--sliding_window", type=int, default=4, \
             help="keep a series of contiguous frames as one observation (represented as a S*L*L tensor)")
-        parser.add_argument("--max_episode_length", type=int, default=10000, \
+        parser.add_argument("--max_episode_length", type=int, default=100000, \
             help="the maximum steps in one episode to enforce an early stop in some case")
         return parser.parse_known_args()[0]
 
@@ -39,7 +39,7 @@ class AtariALE(BaseEnv):
         self.ale.setBool("color_averaging", False)
         self.ale.setInt("random_seed", seed)
         self.ale.setInt("max_num_frames_per_episode", args.max_episode_length)
-        self.ale.loadROM(atari_py.get_game_path(env))  # This should be after setting all parameters
+        self.ale.loadROM(atari_py.get_game_path(env))  # This should be done after setting all parameters
 
         action_space = self.ale.getMinimalActionSet()
         self.real_actions = dict([i, a] for i, a in enumerate(action_space))
@@ -88,7 +88,7 @@ class AtariALE(BaseEnv):
                 self.fake_death = not done
                 self.lives = lives
                 done = True
-        return np.stack(list(self.observation), 0), reward, done, {"lives": self.lives}
+        return np.stack(list(self.observation), 0), float(reward), done, {"lives": self.lives}
 
     def render(self):
         cv2.imshow("screen", self.ale.getScreenRGB()[:, :, ::-1])

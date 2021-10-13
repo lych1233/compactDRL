@@ -3,7 +3,7 @@
 | Algorithms |  |
 | :--------: | :---------------: |
 | dqn | :x: |
-| a2c | Working On... |
+| a2c | :heavy_check_mark: |
 | ddpg | :x: |
 | ppo | :heavy_check_mark: |
 | rainbow | :x: |

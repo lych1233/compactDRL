@@ -31,6 +31,11 @@ class BaseBuffer(object):
             reward   |   [B]
             done     |   [B]
         and all of them are in np.float32 dtype (except the discrete action vector is in np.long)
+        except that for vectorized buffer we have:
+            obs      |   [B, N_Env, n_obs]
+            action   |   [B, N_Env] for discrete action space; [B, N_Env, n_act] for continuous action space
+            reward   |   [B, N_Env]
+            done     |   [B, N_Env]
         '''
         raise NotImplementedError
         # Return data on given indexes

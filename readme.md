@@ -1,25 +1,41 @@
 # *(To Be Continued ...)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
 
+| Algorithms |  |
+| :--------: | :---------------: |
+| dqn | :x: |
+| a2c | Working On... |
+| ddpg | :x: |
+| ppo | :heavy_check_mark: |
+| rainbow | :x: |
+| td3 | :x: |
+| sac | :x: |
 
-## Two goal of this implementation:
+The hyperparameters are not fine tuned, but we garuantee an acceptable performance with a safe setting of hyperparameters.
+
+
+
+## The Goal of This Implementation:
 
 - Provide easy to read/learn code, avoiding nesting over nesting
 - The code compactly presents the core of those algorithms
 
 
 
-## Quick Facts you should know about this implementation:
-
-- All the core codes are presented in the /drl/"algo name"/ folder, which might be friendly for the reader
-- Trick usage is as minimized as possible
-- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and an buffer file (which is used **solely** for storage)
-- You chould use commands in the /scripts/ folder to start an experiment directly
-- In an experiment, "run.py" will first find suitable "env" and "buffer" for the given environment. Then "run.py" passes them to "algo/main" and "algo/main" will use the "env" and "buffer" and all local utils to finish the experiment
-- **Every** specific configuration (hyper-parameter) has a description. The basic configuration explanation in run.py; the environment(buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/main.py
-
-
-
 ## Run
+
+#### Requirements
+
+
+
+All required packages are mostly used for DRL in pytorch. One can also build up the environment by:
+
+```
+pip install -r requirements.txt
+```
+
+but the results may slightly differ from what we've shown as different versions are used during our training
+
+> Additional packages are needed for scenarios like Atari or MuJoCo.
 
 #### Quick Start (An Running Script Example)
 
@@ -31,26 +47,73 @@ cd compactDRL
 bash scripts/ppo/CartPole.sh 0 1
 ```
 
-where 0 is the gpu id and 1 is the seed of the entire experiment
+where "0" is the PGU-id, and "1" is the seed of the entire experiment
+
+#### Arg/Config One Should Notice for A Complete Experiment
+
+
+
+TODO
+
+
+
+## Quick Facts you should know about this implementation:
+
+- All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
+- You could use commands in the scripts/ folder to start an experiment directly
+- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and a buffer file (which is used **solely** for storage), and all other works can be done by algorithm local files
+- In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
+
+
+
+## Project Feature (Pros & Cons)
+
+#### Spotlight
+
+
+- Implementation trick usage is pruned, while keeping those tricks that significantly affect the performance
+- Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
+- Acceptable performance on the most common benchmark environments in research: Atari (for discrete) and MuJoCo (for continuous), as other elegant implementation are usually not tested on all of them
+
+#### Limitation
+
+
+- Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
+- Hyperparameters are not tuned carefully, but they are set to be safe and universal for the same scenario 
+- Currently it only supports environments with either simple discrete action space or one-dimensional vectorized continuous action space
+- RNN-based models are not suportted for an elegant implementation (becasue of my limited coding skills)
 
 
 ## Structure
 
-    ├── drl   // Different algorithms             
+    ├── drl   // Different algorithms
+        ├── vpg // Use vpg for illustration, others follow exactly the same structure
+            ├── main.py // Basic controller
+            ├── agnet.py // An ppo agent including both deciding part and learning part
+            ├── config.py // Complete configuration and hyperparameter
+            ├── logger.py // A simple logger for w&b
+            └── other vpg stuffs
         ├── ppo
-            ├── other ppo stuffs
-            └── main.py
-        ├── policy_gradient_agents
-        └── stochastic_policy_search_agents 
+        └── sac
     ├── envs   // Environments
-        ├── control.py // Environments
+        ├── control.py
         ├── atari.py
+        ├── mujoco.py
         └── base.py
     ├── buffers   // (purely for storage) Buffers 
         ├── normal_buffer.py
         ├── image_buffer.py
+        ├── vector_buffer
         └── base.py 
     ├── scripts
     ├── results
     └── run.py
 
+
+
+
+## Refenrences
+
+- The best deep reinforcement learning turorial I've found: [OpenAI Spinning Up](https://spinningup.openai.com/en/latest/)
+- Spinning Up's easy-to-follow code: [Spinning Up Code](https://github.com/openai/spinningup)
+- The baseline of the highest quality in pytorch that I've found: [Stable-Baselines 3](https://github.com/DLR-RM/stable-baselines3)

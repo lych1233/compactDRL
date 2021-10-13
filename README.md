@@ -19,14 +19,14 @@ The hyperparameters are not fine tuned, but we garuantee an acceptable performan
 ### Pong (Atari)
 
 
-![pong](pong.png)
+![pong](pics/pong.png)
 
 
 
 ### Hopper (MuJoCo)
 
 
-![Hopper](Hopper.png)
+![Hopper](pics/Hopper.png)
 
 
 

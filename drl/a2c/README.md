@@ -8,6 +8,8 @@ bash scripts/a2c/pong.sh 0 0
 ```
 for a quick start
 
+To evaluate existing models, just add "--test_model --load_file 'local path to your model'" at the end of the training script
+
 
 
 

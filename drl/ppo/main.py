@@ -45,9 +45,9 @@ def run(env, test_env, device, buffer):
     test_env.eval()
     agent = PPOAgent(args, env, device)
     if args.load_file is not None:
-        agent.load(os.path.join(os.getcwd(), args.load_file))
+        env = agent.load(os.path.join(os.getcwd(), args.load_file))
     
-    if args.test:
+    if args.test_model:
         avg_score, score_list = test(args, agent, test_env, env.obs_normalizer)
         print("score in last ten episodes: {}".format(score_list[-10:]))
         print("avg score = {:.2f}".format(avg_score))
@@ -98,7 +98,7 @@ def run(env, test_env, device, buffer):
                 avg_score, score_list = test(args, agent, test_env, env.obs_normalizer)
                 if avg_score > best_avg_score:
                     best_avg_score = avg_score
-                    agent.save(save_dir, "best.pt")
+                    agent.save(env, save_dir, "best.pt")
                 print("\n\n----- current score / best score = {:.2f} / {:.2f} -----\n".format(avg_score, best_avg_score))
                 stats["test_T"].append(T)
                 stats["test_score"].append(avg_score)
@@ -106,11 +106,11 @@ def run(env, test_env, device, buffer):
                     from .logger import log
                     log("env", T, {"testing score": avg_score})
             if T % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
-                agent.save(save_dir, "checkpoint_{}.pt".format(T))
+                agent.save(env, save_dir, "checkpoint_{}.pt".format(T))
         
         learn_stats = agent.learn(args, buffer, obs, T)
         for k, v in learn_stats.items():
-            stats["leran_" + k].append(v)
+            stats["learn_" + k].append(v)
         
         tqdm_bar.set_description(
             "Epoch #{}, T #{} | Rolling: {:.2f}".format(

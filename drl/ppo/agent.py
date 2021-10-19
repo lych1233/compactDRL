@@ -101,8 +101,10 @@ class PPOAgent(object):
         data = torch.load(load_file)
         self.policy.load_state_dict(data["policy"])
         self.optimizer.load_state_dict(data["optimizer"])
+        return data["env_wrapper"]
     
-    def save(self, save_dir, file_name):
-        data = {"policy": self.policy.state_dict(),
+    def save(self, env_wrapper, save_dir, file_name):
+        data = {"env_wrapper": env_wrapper,
+                "policy": self.policy.state_dict(),
                 "optimizer": self.optimizer.state_dict()}
         torch.save(data, os.path.join(save_dir, file_name))

@@ -25,7 +25,7 @@ def get_args():
     load_file    |   provide files storing pretrained models, or the training will be from scratch
     save_dir     |   the folder where models and training statictis will be saved
     render       |   render the enviroment during test time
-    test         |   purely evaluate an agent without any training
+    test_model   |   purely evaluate an agent without any training
     test_times   |   number of episodes to do a test
     test_interval         |   number of epochs between two tests
     checkpoint_interval   |   number of interaction steps to save a model backup when it > 0
@@ -85,7 +85,7 @@ def get_args():
         help="the folder where models and training statictis will be saved")
     parser.add_argument("--render", default=False, action="store_true", \
         help="render the enviroment during test time")
-    parser.add_argument("--test", default=False, action="store_true", \
+    parser.add_argument("--test_model", default=False, action="store_true", \
         help="purely evaluate an agent without any training")
     parser.add_argument("--test_times", default=10, type=int, \
         help="number of episodes to estimate the performance of the agent")

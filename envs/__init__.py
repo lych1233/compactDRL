@@ -18,7 +18,7 @@ def make_env(args):
         from .mujoco import MuJoCoRobot
         fn = MuJoCoRobot
     else:
-        raise TypeError("env not defined")
+        raise TypeError("scenario [{}] not defined".format(args.scenario))
     if args.algo in ["a2c", "ppo"]:
         base_seed = np.random.randint(1e9)
         from functools import partial

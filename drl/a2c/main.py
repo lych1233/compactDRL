@@ -30,8 +30,7 @@ def test(args, agent, env, obs_normalizer):
 
 def run(env, test_env, device, buffer):
     args = get_args()
-    if args.algo != "a2c":
-        raise ValueError("unexpected envoking with algorithm not set to be a2c")
+    assert args.algo == "a2c", "unexpected envoking with algorithm not set to be a2c"
     if args.sample_steps % args.num_env != 0:
         warnings.warn("{} transitions will be truancated due to vectorized environment cutting off".format(args.sample_steps % args.num_env))
         args.sample_steps -= args.sample_steps % args.num_env

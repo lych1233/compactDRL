@@ -1,5 +1,7 @@
 from abc import ABC
 
+from torch import BoolStorage
+
 
 class BaseEnv(ABC):
     """Documentation
@@ -28,6 +30,7 @@ class BaseEnv(ABC):
     continuous/discrete  |  tell whether the env is continuous/discrete
     """
     def __init__(self):
+        super(BaseEnv, self).__init__()
         self.training = True
         self.continuous_action_space = False
         self.n_obs, self.n_act = None, None

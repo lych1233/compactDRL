@@ -1,5 +1,6 @@
 import argparse
 
+
 class BaseBuffer(object):
     """Clarify basic functions that a buffer should have
 

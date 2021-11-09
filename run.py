@@ -48,6 +48,8 @@ print("----------------------------------------------\n")
 
 np.random.seed(args.seed)
 torch.manual_seed(np.random.randint(1e9))
+torch.backends.cudnn.benchmark = False
+torch.backends.cudnn.deterministic = True # See https://pytorch.org/docs/stable/notes/randomness.html
 if torch.cuda.is_available() and not args.disable_cuda:
     device = torch.device("cuda")
     torch.cuda.manual_seed(np.random.randint(1e9))
@@ -65,5 +67,7 @@ elif args.algo == "a2c":
     drl.A2C(env, test_env, device, buffer)
 elif args.algo == "ppo":
     drl.PPO(env, test_env, device, buffer)
+elif args.algo == "td3":
+    drl.TD3(env, test_env, device, buffer)
 else:
     raise ValueError("algorithm not defined")

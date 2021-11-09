@@ -13,7 +13,7 @@ To evaluate existing models, just add "--test_model --load_file 'local path to y
 
 
 
-### Commands and Tips for A2C
+### Commands and Tips for PPO
 
 Here is an example command to train a a2c agent, containing those hyperparameters of the first prior to consider:
 

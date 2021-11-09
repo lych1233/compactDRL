@@ -8,9 +8,9 @@ def make_buffer(args, env):
     """
     if args.algo in ["a2c", "ppo"]:
         return VectorBuffer(env, args.num_env)
-    if args.env_type in ["control", "mujuco"]:
+    if args.scenario in ["control", "mujoco"]:
         return NormalBuffer(env)
-    elif args.env_type in ["atari"]:
+    elif args.scenario in ["atari"]:
         return ImageBuffer(env)
     else:
         raise NotImplementedError

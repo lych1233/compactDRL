@@ -26,7 +26,7 @@ class NormalBuffer(BaseBuffer):
         raw_transition = np.dtype([
             ("obs", np.float32, self.obs_shape),
             ("action", int) if self.discrete
-                else ("actoin", np.float32, (env.n_act, )),
+                else ("action", np.float32, (env.n_act, )),
             ("reward", np.float32),
             ("done", bool)
         ])
@@ -35,7 +35,7 @@ class NormalBuffer(BaseBuffer):
         self.trans_dtype = np.dtype([
             ("obs", np.float32, self.obs_shape),
             ("action", int) if self.discrete
-                else ("actoin", np.float32, (env.n_act, )),
+                else ("action", np.float32, (env.n_act, )),
             ("reward", np.float32),
             ("done", bool),
             ("pad", np.uint8, pad_byte)
@@ -67,13 +67,17 @@ class NormalBuffer(BaseBuffer):
             else:
                 raise ValueError("The buffer type {} is not defined".format(self.kicking))
     
-    def get(self, idx):
+    def get(self, idx, collect_next_obs=False):
         if np.max(idx) >= self.L:
             raise ValueError("The index {} is larger than current buffer size {}".format(np.max(idx), self.L))
         data = self.stack[idx]
         obs, action, reward = data["obs"], data["action"], data["reward"]
         done = data["done"].astype(np.float32)
-        return {"obs": obs, "action": action, "reward": reward, "done": done}
+        if collect_next_obs:
+            next_obs = self.get_next_obs(idx)
+            return {"obs": obs, "action": action, "reward": reward, "done": done, "next_obs": next_obs}
+        else:
+            return {"obs": obs, "action": action, "reward": reward, "done": done}
     
     def get_next_obs(self, idx):
         if self.next_obs_stack is None:

@@ -16,6 +16,10 @@ The hyperparameters are not fine tuned, but we garuantee an acceptable performan
 
 ## Performance
 
+
+Different algorithms have varying sample efficiency and training speed, especially between on-policy algorithms and off-policy algorithms. Therefore we adopt different training steps for them.
+
+
 ### Pong (Atari)
 
 
@@ -107,7 +111,7 @@ See README in each drl/algo folder for some tips for a specific algorithm
             ├── logger.py // A simple logger for w&b
             └── other a2c stuffs (usually there is a nn_blocks.py for building basic neural networks)
         ├── ppo
-        └── sac
+        └── td3
     ├── envs   // Environments
         ├── control.py
         ├── atari.py

@@ -12,7 +12,7 @@ def get_args():
     value_loss_coef   |   coefficient of the value loss
     entropy_coef      |   coefficient of the entropy term for robust training
     max_grad_norm     |   clip the gradient for stable training
-    hidden_dim        |   number of hidden nodes/channels per/cnn mlp layer
+    hidden_dim        |   number of hidden nodes per mlp layer
     num_T             |   number of interaction steps to train an agent (may affect the learning rate decay
     sample_steps      |   number of environment-interacting (sampling) steps in one training epoch
     num_minibatch     |   split the data into a few minibatchs for fasther fitting (may undermine stability
@@ -59,7 +59,7 @@ def get_args():
     parser.add_argument("--max_grad_norm", default=0.5, type=float, \
         help="clip the gradient for stable training")
     parser.add_argument("--hidden_dim", default=128, type=int, \
-        help="number of hidden nodes/channels per/cnn mlp layer")
+        help="number of hidden nodes per mlp layer")
     parser.add_argument("--num_T", default=10000000, type=int, \
         help="number of interaction steps to train an agent (may affect the learning rate decay")
     parser.add_argument("--sample_steps", default=1024, type=int, \

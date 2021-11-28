@@ -2,9 +2,9 @@ import argparse
 
 
 def get_args():
-    """This implementation lacks of some useful tricks like observation/value normalization
+    """A2C (Advantage Actor-Critic, also known as vanilla policy gradient)
     
-    A2C (Advantage Actor-Critic, also known as vanilla policy gradient) core hyper-parameters    
+    core hyper-parameters    
     ---------------------------------------------------------------------------
     lr                |   the learning rate of the actor-critic
     gamma             |   discounting factor γ for future reward accumulation
@@ -13,9 +13,9 @@ def get_args():
     entropy_coef      |   coefficient of the entropy term for robust training
     max_grad_norm     |   clip the gradient for stable training
     hidden_dim        |   number of hidden nodes per mlp layer
-    num_T             |   number of interaction steps to train an agent (may affect the learning rate decay
+    num_T             |   number of interaction steps to train an agent (may affect the learning rate decay)
     sample_steps      |   number of environment-interacting (sampling) steps in one training epoch
-    num_minibatch     |   split the data into a few minibatchs for fasther fitting (may undermine stability
+    num_minibatch     |   split the data into a few minibatchs for fasther fitting (may undermine stability)
 
     
     More parameters for record, test and other stuffs
@@ -61,7 +61,7 @@ def get_args():
     parser.add_argument("--hidden_dim", default=128, type=int, \
         help="number of hidden nodes per mlp layer")
     parser.add_argument("--num_T", default=10000000, type=int, \
-        help="number of interaction steps to train an agent (may affect the learning rate decay")
+        help="number of interaction steps to train an agent (may affect the learning rate decay)")
     parser.add_argument("--sample_steps", default=1024, type=int, \
         help="number of environment-interacting (sampling) steps in one training epoch")
     parser.add_argument("--num_minibatch", default=1, type=int, \

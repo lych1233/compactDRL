@@ -4,10 +4,10 @@
 | :--------: | :---------------: |
 | dqn | :x: |
 | a2c | :heavy_check_mark: |
-| ddpg | :x: |
+| ddpg | :heavy_check_mark: |
 | ppo | :heavy_check_mark: |
 | rainbow | :x: |
-| td3 | :x: |
+| td3 | :heavy_check_mark: |
 | sac | :x: |
 
 The hyperparameters are not fine tuned, but we garuantee an acceptable performance with a safe setting of hyperparameters.

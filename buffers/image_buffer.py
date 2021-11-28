@@ -12,7 +12,7 @@ class ImageBuffer(BaseBuffer):
     An observation is a tensor of L * W * H in [0, 1). We only stores the first frame in uint8 format.
     Typically for O \in [L, W, H], we store int(O[-1, :W, :H] * 255)
     
-    All other data are in np.float32/np.long form so it can be used for torch without a dtype transformation
+    All other data are in np.float32/np.long form so it can be used for pytorch processing without a dtype transformation
     The data will be stored on the CPU
     """
 
@@ -113,9 +113,11 @@ class ImageBuffer(BaseBuffer):
         self.stack = np.array([self.empty_data] * self.S, dtype=self.trans_dtype)
         
     def add(self, obs, action, reward, done, next_obs=None):
-        self.stack[self.cur] = (obs, action, reward, done, self.pad_data)
         if self.L < self.S:
             self.L += 1
+        self.stack[self.cur] = (obs, action, reward, done, self.pad_data)
+        if self.L < self.S:
+            self.cur += 1
         else:
             if self.kicking == "dequeue":
                 self.cur = (self.cur + 1) % self.S

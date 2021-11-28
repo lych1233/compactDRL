@@ -7,7 +7,7 @@ class NormalBuffer(BaseBuffer):
     """Normal Buffer directly stores all transitions
     
     All data are returned in np.float32/np.long format and [Batch_Size, Dim] shape
-    so it can be used for pytorch process without any dtype transformation
+    so it can be used for pytorch processing without any dtype transformation
     
     The data is stored on the CPU
     """
@@ -51,13 +51,14 @@ class NormalBuffer(BaseBuffer):
         self.next_obs_stack = None
         
     def add(self, obs, action, reward, done, next_obs=None):
+        if self.L < self.S:
+            self.L += 1
         self.stack[self.cur] = (obs, action, reward, done, self.pad_data)
         if next_obs is not None:
             if self.next_obs_stack is None:
                 self.next_obs_stack = np.zeros((self.S, *self.obs_shape), dtype=np.float32)
             self.next_obs_stack[self.cur] = next_obs
         if self.L < self.S:
-            self.L += 1
             self.cur += 1
         else:
             if self.kicking == "dequeue":

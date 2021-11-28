@@ -65,6 +65,8 @@ if args.algo == "dqn":
     raise NotImplementedError
 elif args.algo == "a2c":
     drl.A2C(env, test_env, device, buffer)
+elif args.algo == "ddpg":
+    drl.DDPG(env, test_env, device, buffer)
 elif args.algo == "ppo":
     drl.PPO(env, test_env, device, buffer)
 elif args.algo == "td3":

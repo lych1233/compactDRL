@@ -5,7 +5,7 @@ class BaseBuffer(object):
     """Clarify basic functions that a buffer should have
 
     buffer_type       |   "dequeue" is First-In-First-Out;
-                          "reservoir" randomly eliminates an old peice of data;
+                      |   "reservoir" randomly eliminates an old peice of data;
     buffer_capacity   |   the maximum number of trainsitions a buffer can hold
     """
     

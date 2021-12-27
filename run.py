@@ -62,14 +62,18 @@ test_env.eval()
 buffer = buffers.make_buffer(args, env)
 
 if args.algo == "dqn":
-    raise NotImplementedError
+    drl.DQN(env, test_env, device, buffer)
 elif args.algo == "a2c":
     drl.A2C(env, test_env, device, buffer)
 elif args.algo == "ddpg":
     drl.DDPG(env, test_env, device, buffer)
+elif args.algo == "rainbow":
+    drl.Rainbow(env, test_env, device, buffer)
 elif args.algo == "ppo":
     drl.PPO(env, test_env, device, buffer)
 elif args.algo == "td3":
     drl.TD3(env, test_env, device, buffer)
+elif args.algo == "sac":
+    drl.SAC(env, test_env, device, buffer)
 else:
     raise ValueError("algorithm not defined")

@@ -1,7 +1,5 @@
 from abc import ABC
 
-from torch import BoolStorage
-
 
 class BaseEnv(ABC):
     """Documentation

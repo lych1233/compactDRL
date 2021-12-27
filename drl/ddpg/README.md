@@ -32,5 +32,5 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 
 ### Warning for Using DDPG
 
-- DDPG is a little bit out-dated and is not the state of the art for single agent environments (though MADDPG is still used for MARL), and it has a serious problem on overestimating the Q-value which often leads to a terrible result
+- DDPG is a little bit out-dated and is not the state of the art for single agent environments (though MADDPG is still used for MARL or many situations), and it has a serious problem on overestimating the Q-value which often leads to a terrible result
 - It is better to use TD3 as an alternative, as TD3 is an improved version of DDPG which alleviates the problem of Q-value overestimation

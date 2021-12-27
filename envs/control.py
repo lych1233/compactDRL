@@ -1,5 +1,4 @@
 import gym
-import numpy as np
 
 from .base import BaseEnv
 

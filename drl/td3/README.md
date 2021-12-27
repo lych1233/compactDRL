@@ -33,5 +33,5 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ### Some Implementation Lessons
 
 - We do not use gradient clipping here but experiments show that extremely larger Q values still occur occasionally during training, so it might be helpful for stable training
-- Currently I do not know any other strategies to solve MounntainCarContinuous-v0 by TD3 without strong Ornstein Uhlenbeck noise
+- Currently I do not know any other strategies to solve MountainCarContinuous-v0 by TD3 without strong Ornstein Uhlenbeck noise
 - TD3 is sensitive to the hyperparameters so careful tuning for each environment is essential for a good performance

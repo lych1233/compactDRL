@@ -59,7 +59,7 @@ torch.set_num_threads(4)
 
 env, test_env = envs.make_env(args)
 test_env.eval()
-buffer = buffers.make_buffer(args, env)
+buffer = buffers.make_buffer(args, env, device)
 
 if args.algo == "dqn":
     drl.DQN(env, test_env, device, buffer)

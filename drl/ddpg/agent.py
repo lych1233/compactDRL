@@ -53,11 +53,11 @@ class DDPGAgent(object):
         
         idx = np.random.choice(len(buffer), batch_size, replace=True)
         data = buffer.get(idx, collect_next_obs=True)
-        obs = torch.as_tensor(data["obs"]).to(self.device)
-        action = torch.as_tensor(data["action"]).to(self.device)
-        reward = torch.as_tensor(data["reward"]).to(self.device)
-        done = torch.as_tensor(data["done"]).to(self.device)
-        next_obs = torch.as_tensor(data["next_obs"]).to(self.device)
+        obs = data["obs"]
+        action = data["action"]
+        reward = data["reward"]
+        done = data["done"]
+        next_obs = data["next_obs"]
         
         online_Q = self.online_critic(obs, action)
         with torch.no_grad():

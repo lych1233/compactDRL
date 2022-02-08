@@ -39,11 +39,11 @@ class DQNAgent(object):
         
         idx = np.random.choice(len(buffer), batch_size, replace=True)
         data = buffer.get(idx, collect_next_obs=True)
-        obs = torch.as_tensor(data["obs"]).to(self.device)
-        action = torch.as_tensor(data["action"]).to(self.device)
-        reward = torch.as_tensor(data["reward"]).to(self.device)
-        done = torch.as_tensor(data["done"]).to(self.device)
-        next_obs = torch.as_tensor(data["next_obs"]).to(self.device)
+        obs = data["obs"]
+        action = data["action"]
+        reward = data["reward"]
+        done = data["done"]
+        next_obs = data["next_obs"]
         
         online_Q = self.online_net(obs).gather(1, action.view(-1, 1)).view(-1)
         with torch.no_grad():
@@ -58,7 +58,7 @@ class DQNAgent(object):
         stats["Q_loss"] = Q_loss.item()
 
         self.update_times += 1
-        if self.update_times % args.target_update_interval:
+        if self.update_times % args.target_update_interval == 0:
             self.target_net.load_state_dict(self.online_net.state_dict()) 
         
         if args.wandb_show:

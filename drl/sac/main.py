@@ -75,7 +75,11 @@ def run(env, test_env, device, buffer):
                 from .logger import log
                 log("env", T, {"training score": cur_score})
                 log("env", T, {"episode length": episode_len})
-            cur_score, episode_len = 0, 0
+            cur_score, episode_len = 0, 0        
+            tqdm_bar.set_description(
+                "Episode #{}, T #{} | Rolling: {:.2f}".format(
+                episode, T, np.mean(stats["all_score"][-20:]))
+            )
             obs = env.reset()
         else:
             obs = next_obs
@@ -99,11 +103,6 @@ def run(env, test_env, device, buffer):
                 log("env", T, {"testing score": avg_score})
         if T % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
             agent.save(save_dir, "checkpoint_{}.pt".format(T))
-        
-        tqdm_bar.set_description(
-            "Episode #{}, T #{} | Rolling: {:.2f}".format(
-            episode, T, np.mean(stats["all_score"][-20:]))
-        )
     
     if args.wandb_show:
         from .logger import wandb_finish

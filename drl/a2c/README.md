@@ -34,4 +34,4 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ### Some Implementation Lessons
 
 - See the tips for ppo (in drl/ppo/README.md)
-- Use small batch_size for sample efficiency and mutiple paralleled environments (though this implies short chunck length)
+- Use small batch_size for sample efficiency and mutiple paralleled environments (though this implies short chunk length)

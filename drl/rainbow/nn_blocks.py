@@ -1,4 +1,5 @@
 from functools import partial
+from collections import OrderedDict
 
 import numpy as np
 import torch
@@ -10,7 +11,7 @@ class NoisyLinear(nn.Module):
     def __init__(self, args, n_in, n_out):
         super(NoisyLinear, self).__init__()
         self.use_noise = "noisy_net" in args.enhancement
-        self.noise_std = args.noisy_net_std
+        self.noise_std = args.noise_std
         self.n_in, self.n_out = n_in, n_out
         self.w_mean = nn.Parameter(torch.zeros(n_out, n_in).uniform_(-1, 1) / np.sqrt(n_in))
         self.w_std = nn.Parameter(torch.zeros(n_out, n_in).fill_(self.noise_std / np.sqrt(n_in)))
@@ -18,13 +19,13 @@ class NoisyLinear(nn.Module):
         self.b_mean = nn.Parameter(torch.zeros(n_out).uniform_(-1, 1) / np.sqrt(n_in))
         self.b_std = nn.Parameter(torch.zeros(n_out).fill_(self.noise_std / np.sqrt(n_out)))
         self.register_buffer('b_eps', torch.zeros(n_out))
-        self.reset_eps()
-    
+        self.reset_noise()
+
     def _scaled_noise(self, n):
         x = torch.randn(n, device=self.w_mean.device)
         return x.sign().mul_(x.abs().sqrt_())
 
-    def reset_eps(self):
+    def reset_noise(self):
         eps_in = self._scaled_noise(self.n_in) 
         eps_out = self._scaled_noise(self.n_out)
         self.w_eps.copy_(eps_out.ger(eps_in))
@@ -75,19 +76,20 @@ class QNet(nn.Module):
         self.atoms = args.atoms
         self.support = torch.linspace(args.minV, args.maxV, self.atoms)
         noisy_layer = partial(NoisyLinear, args)
-        self.value_mlp = nn.Sequential(
-            noisy_layer(self.feature_dim, self.hidden_dim),
-            nn.ReLU(),
-            noisy_layer(self.hidden_dim, self.atoms if self.distributional else 1),
-        )
-        self.advantage_mlp = nn.Sequential(
-            noisy_layer(self.feature_dim, self.hidden_dim),
-            nn.ReLU(),
-            noisy_layer(self.hidden_dim, n_act * self.atoms if self.distributional else n_act),
-        )
+        self.value_mlp = nn.Sequential(OrderedDict([
+            ("linear1", noisy_layer(self.feature_dim, self.hidden_dim)),
+            ("relu", nn.ReLU()),
+            ("linear2", noisy_layer(self.hidden_dim, self.atoms if self.distributional else 1)),
+        ]))
+        self.advantage_mlp = nn.Sequential(OrderedDict([
+            ("linear1", noisy_layer(self.feature_dim, self.hidden_dim)),
+            ("relu", nn.ReLU()),
+            ("linear2", noisy_layer(self.hidden_dim, n_act * self.atoms if self.distributional else n_act)),
+        ]))
     
-    def move_constant_to(self, device):
+    def to(self, device):
         self.support = self.support.to(device)
+        return super(QNet, self).to(device)
     
     def forward(self, obs, get_distribution=False):
         feature = self.feature_extractor(obs)
@@ -108,3 +110,9 @@ class QNet(nn.Module):
                 return (Q * self.support).sum(2)
         else:
             return Q
+
+    def reset_noise(self):
+        self.value_mlp.linear1.reset_noise()
+        self.value_mlp.linear2.reset_noise()
+        self.advantage_mlp.linear1.reset_noise()
+        self.advantage_mlp.linear2.reset_noise()

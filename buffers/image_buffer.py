@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 from .base import BaseBuffer
 
@@ -13,8 +14,9 @@ class ImageBuffer(BaseBuffer):
     The data will be stored on the CPU
     """
 
-    def __init__(self, env):
+    def __init__(self, env, device):
         args = self.get_args()
+        self.device = device
         self.kicking = args.buffer_type
         self.S, self.L = args.buffer_capacity, 0
         self.discrete = env.discrete
@@ -47,13 +49,14 @@ class ImageBuffer(BaseBuffer):
             self.pad_data
         )
         self.stack = np.array([self.empty_data] * self.S, dtype=self.trans_dtype)
+        self.next_frame = None
         
     def add(self, obs, action, reward, done, next_obs=None):
         if self.L < self.S:
             self.L += 1
         self.frames[self.cur] = obs[-1] * 256
         if next_obs is not None:
-            self.frames[(self.cur + 1) % self.S] = next_obs[-1] * 256
+            self.next_frame = next_obs[-1]
         self.stack[self.cur] = (action, reward, done, self.pad_data)
         if self.L < self.S:
             self.cur += 1
@@ -61,32 +64,50 @@ class ImageBuffer(BaseBuffer):
             if self.kicking == "dequeue":
                 self.cur = (self.cur + 1) % self.S
             elif self.kicking == "reservoir":
-                self.cur = np.random.randint(self.S)
+                raise ValueError("The image buffer only supports continuous storage, please use norml_buffer as a replacement")
             else:
                 raise ValueError("The buffer type {} is not defined".format(self.kicking))
     
-    def get(self, idx, collect_next_obs=False):
-        if np.max(idx) >= self.L:
+    def get(self, idx, collect_next_obs=False, terms=("obs", "action", "reward", "done")):
+        if self.L < self.S and np.max(idx) >= self.L:
             raise ValueError("The index {} is larger than current buffer size {}".format(np.max(idx), self.L))
-        obs = self.get_obs(idx)
+        idx %= self.S
+        if collect_next_obs and "next_obs" not in terms:
+            terms = (*terms, "next_obs")
+        ret = {}
+        if "obs" in terms:
+            ret["obs"] = self.get_obs(idx)[0]
         data = self.stack[idx]
-        action, reward = data["action"], data["reward"]
-        done = data["done"].astype(np.float32)
-        if collect_next_obs:
-            next_obs = self.get_obs(idx + 1)
-            return {"obs": obs, "action": action, "reward": reward, "done": done, "next_obs": next_obs}
-        else:
-            return {"obs": obs, "action": action, "reward": reward, "done": done}
+        if "action" in terms:
+            ret["action"] = torch.as_tensor(data["action"]).to(self.device)
+        if "reward" in terms:
+            ret["reward"] = torch.as_tensor(data["reward"]).to(self.device)
+        if "done" in terms:
+            ret["done"] = torch.FloatTensor(data["done"]).to(self.device)
+        if "next_obs" in terms:
+            ret["next_obs"] = self.get_next_obs(idx)[0]
+        return ret
     
     def get_obs(self, idx):
-        obs_frames_idx = np.expand_dims(idx, 1) + np.arange(self.frames_per_obs) - self.frames_per_obs + 1
-        obs_frames_idx %= self.S
-        obs = (self.frames[obs_frames_idx] / 256).astype(np.float32)
+        obs_frames_idx = np.expand_dims(idx, -1) + np.arange(self.frames_per_obs) - self.frames_per_obs + 1
+        obs = torch.FloatTensor(self.frames[obs_frames_idx]).to(self.device) / 256
         mask = np.copy(self.stack[obs_frames_idx]["done"])
+        mask[(idx - (self.cur - 1)) % self.S == 0] = True
+        mask_shape = mask.shape
+        mask = mask.reshape(-1, mask_shape[-1])
+        mask[:, -1] = False
         for i in range(mask.shape[-1] - 2, -1, -1):
             mask[:, i] = np.logical_or(mask[:, i], mask[:, i + 1])
+        mask = mask.reshape(mask_shape)
         obs[mask] = 0
-        return obs
+        return obs, mask
+    
+    def get_next_obs(self, idx):
+        next_obs, mask = self.get_obs((idx + 1) % self.S)
+        if self.next_frame is not None:
+            next_obs[idx == self.cur] = torch.FloatTensor(self.next_frame).to(self.device)
+            next_obs[mask] = 0
+        return next_obs, mask
     
     def clearall(self):
         self.L, self.cur = 0, 0

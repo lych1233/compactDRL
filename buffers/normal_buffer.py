@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 from .base import BaseBuffer
 
@@ -12,8 +13,9 @@ class NormalBuffer(BaseBuffer):
     The data is stored on the CPU
     """
 
-    def __init__(self, env):
+    def __init__(self, env, device):
         args = self.get_args()
+        self.device = device
         self.kicking = args.buffer_type
         self.S, self.L = args.buffer_capacity, 0
         self.discrete = env.discrete
@@ -68,17 +70,26 @@ class NormalBuffer(BaseBuffer):
             else:
                 raise ValueError("The buffer type {} is not defined".format(self.kicking))
     
-    def get(self, idx, collect_next_obs=False):
-        if np.max(idx) >= self.L:
+    def get(self, idx, collect_next_obs=False, terms=("obs", "action", "reward", "done")):
+        if self.L < self.S and np.max(idx) >= self.L:
             raise ValueError("The index {} is larger than current buffer size {}".format(np.max(idx), self.L))
+        idx %= self.S
+        if collect_next_obs and "next_obs" not in terms:
+            terms = (*terms, "next_obs")
+        ret = {}
         data = self.stack[idx]
-        obs, action, reward = data["obs"], data["action"], data["reward"]
-        done = data["done"].astype(np.float32)
-        if collect_next_obs:
-            next_obs = self.get_next_obs(idx)
-            return {"obs": obs, "action": action, "reward": reward, "done": done, "next_obs": next_obs}
-        else:
-            return {"obs": obs, "action": action, "reward": reward, "done": done}
+        if "obs" in terms:
+            ret["obs"] = torch.as_tensor(data["obs"]).to(self.device)
+        data = self.stack[idx]
+        if "action" in terms:
+            ret["action"] = torch.as_tensor(data["action"]).to(self.device)
+        if "reward" in terms:
+            ret["reward"] = torch.as_tensor(data["reward"]).to(self.device)
+        if "done" in terms:
+            ret["done"] = torch.FloatTensor(data["done"]).to(self.device)
+        if "next_obs" in terms:
+            ret["next_obs"] = torch.as_tensor(self.get_next_obs(idx)).to(self.device)
+        return ret
     
     def get_next_obs(self, idx):
         if self.next_obs_stack is None:

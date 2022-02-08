@@ -10,3 +10,5 @@ _ppo**
 _s_gv_pong**
 _spin**
 /_*
+*.lprof
+*.prof

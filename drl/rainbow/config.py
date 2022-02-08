@@ -83,19 +83,20 @@ def get_args():
     print("\n---------- general dqn core hyperparameters ----------")
     for key, val in vars(parser.parse_known_args()[0]).items():
         print("{:>25}   |   {}".format(key, val))
-    print("----------------------------------------------\n")
+    print("------------------------------------------------------\n")
     
     # Now hyperparameters for a bunch of enhancements
     parser.add_argument("--enhancement", default=["double", "dueling", "distributional", "noisy_net", "multi_step", "prioritized_replay"], type=str, nargs="+", \
-        help="number of interaction steps to train an agent (may affect the learning rate decay)")
+        choices=["double", "dueling", "distributional", "noisy_net", "multi_step", "prioritized_replay", "none"], \
+        help="there are overal six types of improvement of DQN that is used in Rainbow")
     # For distributional RL
     parser.add_argument("--atoms", type=int, default=51, help="number of supporting points in Q-value distribution")
     parser.add_argument("--minV", type=float, default=-10, help="the samllest support point")
     parser.add_argument("--maxV", type=float, default=10, help="the largest support point")
     # For noisy net
-    parser.add_argument("--noise_std", type=float, default=0.1, help="epsilon std set in the noisy net")
+    parser.add_argument("--noise_std", type=float, default=0.5, help="epsilon std set in the noisy net")
     # For multi-step bootstrap learning
-    parser.add_argument("--multi_step", type=int, default=3, help="multiple steps for bootstraping in the Bellman Equation")
+    parser.add_argument("--n_steps", type=int, default=3, help="number of steps for bootstraping in the Bellman Equation")
     # For prioritized replay
     parser.add_argument("--priority_alpha", type=float, default=0.5, help="transition sampling probability proportional to δ^α")
     parser.add_argument("--priority_beta", type=float, default=0.4, help="importance sampling weight w^β where β starts from β_0 (0.4) to 1 to compensate prioritzied sampling for unbiased Q-value equation near convergence")
@@ -107,7 +108,7 @@ def get_args():
             start_printing = True
         if start_printing:
             print("{:>25}   |   {}".format(key, val))
-    print("----------------------------------------------\n")
+    print("---------------------------------------------------------\n")
 
     # Other necessary parameters for a complete experiment
     parser.add_argument("--load_file", default=None, type=str, \

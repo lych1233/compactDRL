@@ -2,22 +2,22 @@
 
 | Algorithms |  |
 | :--------: | :---------------: |
-| dqn | :x: (coming soon) |
+| dqn | :heavy_check_mark: |
 | a2c | :heavy_check_mark: |
 | ddpg | :heavy_check_mark: |
 | ppo | :heavy_check_mark: |
-| rainbow | :x: |
+| rainbow | :heavy_check_mark: |
 | td3 | :heavy_check_mark: |
 | sac | :heavy_check_mark: |
 
-The hyperparameters are not extensively fine-tuned, but we garuantee an acceptable performance with a safe setting of hyperparameters.
+The hyperparameters have not been extensively fine-tuned, but we garuantee an acceptable performance with a safe setting of hyperparameters.
 
 
 
 ## Performance
 
 
-Different algorithms have varying sample efficiency and training speed, especially between on-policy algorithms and some off-policy algorithms. Therefore we adopt different training steps for different algorithms. [Full Results](pics)
+Different algorithms have varying sample efficiency and training speed, especially between on-policy algorithms and some off-policy algorithms. Therefore we adopt different training steps for different algorithms. [Full Results Here](pics)
 
 
 ### Pong (Atari)
@@ -60,26 +60,26 @@ but the results may slightly differ from what we've shown as packages in differe
 #### Quick Start (An Running Script Example)
 
 
-- To start an example experiment, say, use PPO to train an agent in the "CartPole-v1'' environment, you can direct use:
+- To start an example experiment, say, use PPO to train an agent in the "CartPole-v1" environment, you can direct use:
 
 ```
 cd compactDRL
 bash scripts/ppo/CartPole.sh 0 1
 ```
 
-where "0" is the PGU-id, and "1" is the seed of the entire experiment
+where "0" is the GPU-id, and "1" is the seed of the entire experiment
 
-See README in each drl/algo folder for some tips for a specific algorithm
+See README in each drl/algo folder for some tips of a specific algorithm
 
 
 
 ## Quick Facts you should know about this implementation:
 
 
-- All the core codes are presented in the drl/"algo name"/ folder, which might be friendly for the reader
-- You could use commands in the scripts/ folder to start an experiment directly
-- To run an experiment only two additional files are needed: an environment file (which can be regarded as a lightly extended OpenAI Gym API) and a buffer file (which is used **solely** for storage), and all other works can be done by drl/"algo name"/ local files
-- In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo/main.py" and "algo/main.py" will use that "env" and "buffer" and all local files to finish the experiment
+- All the core codes are presented in the "drl/algo_name/" folder, which might be friendly for the reader
+- You could use commands in the "scripts/" folder to start an experiment directly
+- To run an experiment, only two additional files are needed: an environment file (which can be regarded as a lightly modified OpenAI Gym API) and a buffer file (which is used **solely** for data storage), while all other works are done by "drl/algo_name/local_files"
+- In an experiment, "run.py" will first find suitable "env" and "buffer" for the specific configuration. Then "run.py" passes them to "algo_name/main.py" and "algo_name/main.py" will use that "env" and "buffer" and all local files to finish the experiment
 
 
 

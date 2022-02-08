@@ -53,20 +53,19 @@ class A2CAgent(object):
         n, L = args.num_env, S // args.num_env
         data = buffer.get(np.arange(L))
 
-        obs = torch.as_tensor(data["obs"]).to(self.device)
+        obs = data["obs"]
         obs = obs.view(-1, *obs.shape[2:])
         with torch.no_grad():
-            value = self.policy.get_value(obs).cpu().numpy().reshape(L, n)
+            value = self.policy.get_value(obs).reshape(L, n)
             last_obs = torch.tensor(last_obs, dtype=torch.float32, device=self.device)
-            last_value = self.policy.get_value(last_obs).cpu().numpy().reshape(1, n)
+            last_value = self.policy.get_value(last_obs).reshape(1, n)
         done = data["done"]
-        adv = data["reward"] + args.gamma * (1 - done) * np.concatenate([value[1:], last_value], 0) - value
+        adv = data["reward"] + args.gamma * (1 - done) * torch.cat([value[1:], last_value], 0) - value
         self.discounted_backward_sum(adv, done, args.lam * args.gamma)
-        ret = torch.tensor(value + adv, dtype=torch.float32, device=self.device)
-        adv = torch.tensor(adv, dtype=torch.float32, device=self.device)
+        ret = value + adv
 
-        action = torch.as_tensor(data["action"])
-        action = action.to(self.device).view(-1, *action.shape[2:])
+        action = data["action"]
+        action = action.view(-1, *action.shape[2:])
 
         adv, ret = adv.view(-1), ret.view(-1)
         stats = defaultdict(float)

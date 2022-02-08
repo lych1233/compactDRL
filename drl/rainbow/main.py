@@ -30,6 +30,13 @@ def run(env, test_env, device, buffer):
     args = get_args()
     assert args.algo == "rainbow", "unexpected envoking with algorithm not set to be rainbow"
     assert env.discrete, "rainbow only deals with continuous action space"
+    import warnings
+    if "noisy_net" in args.enhancement and args.eps > 0:
+        warnings.warn("For noisy net exploration we do not adopt eps-greedy exploration anymore")
+        args.eps = 0
+    if "multi_step" not in args.enhancement and args.n_steps != 1:
+        warnings.warn("One-step boostrap will be used when disabling multi_step, although n_steps={} is set".format(args.n_steps))
+        args.n_steps = 1
     
     save_dir = os.path.join(os.getcwd(), args.save_dir, args.exp_name + "_seed_" + str(args.seed))
     os.makedirs(save_dir, exist_ok=True)
@@ -59,11 +66,15 @@ def run(env, test_env, device, buffer):
     stats = defaultdict(list)
     for T in tqdm_bar:
         agent.lr_decay(args, T, args.num_T)
+        if T % args.update_frequency == 0:
+            agent.reset_noise()
+
         episode_len += 1
         action = agent.act(obs, args.eps)
         next_obs, reward, done, info = env.step(action)
         cur_score += reward
         buffer.add(obs, action, reward, done)
+        pool.add(T, args.num_T)
         if done:
             episode += 1
             stats["all_score"].append(cur_score)
@@ -75,12 +86,16 @@ def run(env, test_env, device, buffer):
                 log("env", T, {"training score": cur_score})
                 log("env", T, {"episode length": episode_len})
             cur_score, episode_len = 0, 0
+            tqdm_bar.set_description(
+                "Episode #{}, T #{} | Rolling: {:.2f}".format(
+                episode, T, np.mean(stats["all_score"][-20:]))
+            )
             obs = env.reset()
         else:
             obs = next_obs
         
         if T > args.start_learning and T % args.update_frequency == 0:
-            learn_stats = agent.learn(args, buffer, T)
+            learn_stats = agent.learn(args, buffer, pool, T)
             for k, v in learn_stats.items():
                 stats["learn_" + k].append(v)
         
@@ -98,11 +113,6 @@ def run(env, test_env, device, buffer):
                 log("env", T, {"testing score": avg_score})
         if T % args.checkpoint_interval == 0 and args.checkpoint_interval > 0:
             agent.save(save_dir, "checkpoint_{}.pt".format(T))
-        
-        tqdm_bar.set_description(
-            "Episode #{}, T #{} | Rolling: {:.2f}".format(
-            episode, T, np.mean(stats["all_score"][-20:]))
-        )
     
     if args.wandb_show:
         from .logger import wandb_finish

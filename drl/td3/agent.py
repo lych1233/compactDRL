@@ -59,11 +59,11 @@ class TD3Agent(object):
         self.learn_steps += 1
         idx = np.random.choice(len(buffer), batch_size, replace=True)
         data = buffer.get(idx, collect_next_obs=True)
-        obs = torch.as_tensor(data["obs"]).to(self.device)
-        action = torch.as_tensor(data["action"]).to(self.device)
-        reward = torch.as_tensor(data["reward"]).to(self.device)
-        done = torch.as_tensor(data["done"]).to(self.device)
-        next_obs = torch.as_tensor(data["next_obs"]).to(self.device)
+        obs = data["obs"]
+        action = data["action"]
+        reward = data["reward"]
+        done = data["done"]
+        next_obs = data["next_obs"]
         
         Q1, Q2 = self.online_Q1(obs, action), self.online_Q2(obs, action)
         with torch.no_grad():

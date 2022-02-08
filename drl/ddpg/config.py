@@ -75,7 +75,7 @@ def get_args():
     print("\n---------- ddpg core hyperparameters ----------")
     for key, val in vars(parser.parse_known_args()[0]).items():
         print("{:>20}   |   {}".format(key, val))
-    print("----------------------------------------------\n")
+    print("-----------------------------------------------\n")
 
     # Other necessary parameters for a complete experiment
     parser.add_argument("--load_file", default=None, type=str, \

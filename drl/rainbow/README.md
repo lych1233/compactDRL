@@ -28,7 +28,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ```
 
 Please pay attention to the hyperparameter ``minV, maxV'' if you want to use the distributional parameterization of Q value. The range [minV, maxV] should contain all possible values of the Q value involved in training. For example, in the environment "MountainCar-v0" where the agent will be assigned reward -1 continuously before success, it is better to use
-
+[-100, 0]
 rather than use the default value of minV, maxV.
 
 
@@ -61,12 +61,12 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ```
 to disable all improvement modules.
 
-Here is a simple result on three atari games.
+Here is a simple ablation result on three atari games.
 
 
 
 ### Warning for Using Rainbow
 
-- Currently rainbow can be regarded as SOTA of model-free algorithms in the atari benchmark in non-distributed training setting
+- Currently rainbow can be regarded as SOTA of model-free algorithms in the atari benchmark in the non-distributed training setting
 
 - There is a good work of revisiting rainbow on a set of mini-atari games which provides some useful insight [rivisiting rainbow](https://psc-g.github.io/posts/research/rl/revisiting_rainbow/)

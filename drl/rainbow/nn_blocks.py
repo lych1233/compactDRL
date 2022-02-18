@@ -29,7 +29,7 @@ class NoisyLinear(nn.Module):
         eps_in = self._scaled_noise(self.n_in) 
         eps_out = self._scaled_noise(self.n_out)
         self.w_eps.copy_(eps_out.ger(eps_in))
-        self.b_eps.copy_(self._scaled_noise(self.n_out))
+        self.b_eps.copy_(eps_out)
     
     def forward(self, x):
         if self.training and self.use_noise:

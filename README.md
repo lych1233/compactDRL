@@ -36,7 +36,7 @@ Different algorithms have varying sample efficiency and training speed, especial
 
 ## The Goal of This Implementation:
 
-- Provide easy to read/learn/follow codes, avoid nesting over nesting
+- Provide easy-to-read/learn/follow codes, avoid nesting over nesting
 - The code compactly presents the core of those algorithms
 
 
@@ -53,11 +53,11 @@ All basic required packages are those commonly used in Deep Reinforcement Leanin
 - gym
 - tqdm
 
-but the results may slightly differ from what we've shown as packages in different versions are used during our training
+but the results may slightly differ from what we've shown above as packages in different versions are used during our training
 
 > Additional packages are needed for scenarios like Atari, MuJoCo or your custom environments.
 
-#### Quick Start (An Running Script Example)
+#### Quick Start (An Runnable Script Example)
 
 
 - To start an example experiment, say, use PPO to train an agent in the "CartPole-v1" environment, you can direct use:
@@ -90,7 +90,7 @@ See README in each drl/algo folder for some tips of a specific algorithm
 
 - Implementation trick usage is pruned, while those tricks that significantly affect the performance are kept
 - Elaborate documentation. **Every** specific configuration (hyper-parameter) has a description: the basic configuration explanation is in run.py; the environment (buffer) configuration explanation is in envs/"env name".py (buffers/base.py); the algorithm-specific hyper-parameter explanation is in drl/"algo name"/config.py
-- Acceptable performance on the most common benchmark environments in academy: Atari (for discrete action space) and MuJoCo (for continuous actoin space), as other elegant implementation I've found are seldom tested on both of them
+- Acceptable performance on the most common benchmark environments in academy: Atari (for discrete action space) and MuJoCo (for continuous actoin space), as other elegant implementations I've found are seldomly tested on both of them
 
 #### Limitation
 
@@ -98,12 +98,13 @@ See README in each drl/algo folder for some tips of a specific algorithm
 - Some tricks are not implemented for the sake of simplicity and clarity, and thus the performance may be worse than the best implementation
 - Hyperparameters are not tuned vary carefully, but we ensure the performance is closed to the best baseline
 - Currently it only supports environments with either simple discrete action space or one-dimensional vectorized continuous action space
-- RNN-based models are not suportted for an elegant implementation (becasue of my limited coding skills to make it simple)
+- RNN-based models are not suportted for an elegant implementation (becasue of my limited coding skills, I do not design a simple framework to include RNN-based models)
 
 
 ## Structure
 
     ├── drl   // Different algorithms
+        ├── dqn
         ├── a2c // Use a2c for illustration, others follow exactly the same structure
             ├── main.py // Basic controller
             ├── agent.py // An a2c agent including both decision making and learning
@@ -111,6 +112,7 @@ See README in each drl/algo folder for some tips of a specific algorithm
             ├── logger.py // A simple logger for w&b
             └── other a2c stuffs (usually there is a nn_blocks.py for building basic neural networks)
         ├── ddpg
+        ├── rainbow
         ├── ppo
         ├── td3
         └── sac

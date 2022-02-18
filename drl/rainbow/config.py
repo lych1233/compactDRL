@@ -20,17 +20,20 @@ def get_args():
     
     hyper-parameters for dqn improvement tricks in rainbow
     ---------------------------------------------------------------------------
-    lr                       |   the learning rate of deep Q-network
-    batch_size               |   the size of each sampled minibatch
-    gamma                    |   discounting factor γ for future reward accumulation
-    max_grad_norm            |   clip the gradient for stable training
-    hidden_dim               |   number of hidden nodes per mlp layer
-    eps                      |   use eps-greedy exploration")
-    num_T                    |   number of interaction steps to train an agent (may affect the learning rate decay
-    start_learning           |   number of steps before updating polices
-    update_frequency         |   number of steps between two model updating process
-    target_update_interval   |   number of model updating steps between cloing the online network to the target network
-    
+    enhancement   |  there are overall six types of improvement of DQN that is used in Rainbow
+                     double, dueling, distributional, noisy_net, multi_step, prioritized_replay
+    For distributional RL
+        atoms            |   number of supporting points in Q-value distribution
+        minV             |    the samllest support point
+        maxV             |   the largest support point
+    For noisy net
+        noise_std        |   epsilon std set in the noisy net
+    For multi-step bootstrap learning
+        n_steps          |   number of steps for bootstraping in the Bellman Equation
+    For prioritized replay
+        priority_alpha   |   transition sampling probability proportional to δ^α
+        priority_beta    |   importance sampling weight w^β where β starts from β_0 (0.4) to 1 to compensate prioritzied sampling for unbiased Q-value equation near convergence
+
     More parameters for record, test and other stuffs
     ---------------------------------------------------------------------------
     load_file    |   provide files storing pretrained models, or the training will be from scratch
@@ -88,7 +91,7 @@ def get_args():
     # Now hyperparameters for a bunch of enhancements
     parser.add_argument("--enhancement", default=["double", "dueling", "distributional", "noisy_net", "multi_step", "prioritized_replay"], type=str, nargs="+", \
         choices=["double", "dueling", "distributional", "noisy_net", "multi_step", "prioritized_replay", "none"], \
-        help="there are overal six types of improvement of DQN that is used in Rainbow")
+        help="there are overall six types of improvement of DQN that is used in Rainbow")
     # For distributional RL
     parser.add_argument("--atoms", type=int, default=51, help="number of supporting points in Q-value distribution")
     parser.add_argument("--minV", type=float, default=-10, help="the samllest support point")

@@ -67,7 +67,7 @@ def get_args():
         help="discounting factor γ for future reward accumulation")
     parser.add_argument("--max_grad_norm", default=10, type=float, \
         help="clip the gradient for stable training")
-    parser.add_argument("--hidden_dim", default=64, type=int, \
+    parser.add_argument("--hidden_dim", default=256, type=int, \
         help="number of hidden nodes per mlp layer")
     parser.add_argument("--eps", default=0.05, type=float, \
         help="use eps-greedy exploration")

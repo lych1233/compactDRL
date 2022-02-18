@@ -4,4 +4,4 @@ CUDA_VISIBLE_DEVICES=$1 python run.py \
     --algo rainbow \
     --num_T 1000000 --test_interval 2000 \
     --target_update_interval 100 \
-    --minV -100 maxV 0
+    --minV -100 --maxV 0

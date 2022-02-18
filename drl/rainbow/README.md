@@ -24,7 +24,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
     --algo rainbow \
     --num_T 3000000 --test_interval 20000 \
     --update_frequency 4 \ # skip somes steps between two model updating processes
-    --lr 6e-5 --batch_size 32 --hidden_dim 512 # this is a safe configuration; the learning rate seems to be the most important hyperparameters, while rainbow is usually robust on other hyperparameters
+    --lr 6e-5 --hidden_dim 512 # this is a safe configuration; the learning rate seems to be the most important hyperparameters, while rainbow is usually robust on other hyperparameters
 ```
 
 Please pay attention to the hyperparameter ``minV, maxV'' if you want to use the distributional parameterization of Q value. The range [minV, maxV] should contain all possible values of the Q value involved in training. For example, in the environment "MountainCar-v0" where the agent will be assigned reward -1 continuously before success, it is better to use
@@ -33,7 +33,7 @@ rather than use the default value of minV, maxV.
 
 
 
-####
+#### Flexible Modules for Ablation Studies
 
 
 For convenient albation studies, our implementation allows fexible adding or removing of all six improvment modules in rainbow. For example, one may use 
@@ -61,7 +61,9 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ```
 to disable all improvement modules.
 
-Here is a simple ablation result on three atari games.
+Here is a simple ablation result on three atari games. We can find that distributional RL and multi-step bootstrap appear to be the most important modules in environment "breakout" and "qbert", which is similar to the [original Rainbow paper](https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/viewFile/17204/16680) except that we do not observe the effect of removing prioritized replay while they find that prioritized replay to be also very important.
+
+[]
 
 
 

@@ -1,3 +1,5 @@
+## Soft Actor-Critic (SAC)
+
 ### Quick Start
 
 Use
@@ -32,5 +34,5 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 
 ### Some Implementation Lessons
 
-- Currently I do not know any other strategies to solve MountainCarContinuous-v0 by SAC without strong Ornstein Uhlenbeck noise. On some random seeds the agent can explore the goal successfully without OU-noise but currently we do not find a good hyperparameter configuration such that SAC continuously solves MountainCarContinous-v0
+- Currently I do not know any other strategies to solve MountainCarContinuous-v0 by SAC without strong Ornstein Uhlenbeck noise or state-dependent exploration. On some random seeds the agent can explore the goal successfully without OU-noise but it apperantly to be some random events. Currently we do not find a good hyperparameter configuration such that SAC continuously solves MountainCarContinous-v0
 - On mujoco SAC is not that sensitive to the hyperparameters and the performance is stable on different hyperparameters

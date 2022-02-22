@@ -3,7 +3,7 @@ import argparse
 
 def get_args():
     """Rainbow (a combination of tricks of DQN improvement)
-    One can also use Double Dueling DQN by setting "--enhancement double dueling"
+    One can also use Dueling Double DQN by setting "--enhancement double dueling"
     
     core hyper-parameters for general DQN
     ---------------------------------------------------------------------------
@@ -12,7 +12,7 @@ def get_args():
     gamma                    |   discounting factor γ for future reward accumulation
     max_grad_norm            |   clip the gradient for stable training
     hidden_dim               |   number of hidden nodes per mlp layer
-    eps                      |   use eps-greedy exploration")
+    eps                      |   use eps-greedy exploration
     num_T                    |   number of interaction steps to train an agent (may affect the learning rate decay
     start_learning           |   number of steps before updating polices
     update_frequency         |   number of steps between two model updating process

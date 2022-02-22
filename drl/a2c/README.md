@@ -1,3 +1,9 @@
+## Advantage Actor Critic (A2C)
+
+It is also called Policiy Gradient (PG), Vanilla Policy Gradient (VPG) or Policy Gradient with a baseline.
+
+
+
 ### Quick Start
 
 Use
@@ -33,5 +39,5 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 
 ### Some Implementation Lessons
 
-- See the tips for ppo (in drl/ppo/README.md)
+- See also the tips for ppo (in drl/ppo/README.md)
 - Use small batch_size for sample efficiency and mutiple paralleled environments (though this implies short chunk length)

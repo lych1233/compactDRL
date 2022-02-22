@@ -1,3 +1,5 @@
+## Deep Q-Network (DQN)
+
 ### Quick Start
 
 Use
@@ -34,4 +36,4 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ### Warning for Using DQN
 
 - Vanilla DQN is usually the first algorithm one will meet in deep reinforcement learning, which is simple and efficient; however, it is no longer the SOTA and there is a lot of improvement of DQN, like Double-Dueling DQN, or later Rainbow
-- Since DQN does not use the double Q-network trick, it will overestimate the Q value (sometimes million or billion-level Q value), especially in environments with only positive rewards like "CartPole-v1"
+- Since DQN does not use the double Q-network trick, it will overestimate the Q value (sometimes million or billion large), especially in environments with only positive rewards like "CartPole-v1"

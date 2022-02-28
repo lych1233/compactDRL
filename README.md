@@ -1,4 +1,4 @@
-# *(To Be Continued ...)* Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
+# Easy-to-read Deep Reinforcement Learning Algorithms in a Compact Implementation
 
 | Algorithms |  |
 | :--------: | :---------------: |

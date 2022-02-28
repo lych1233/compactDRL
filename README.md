@@ -30,7 +30,7 @@ Different algorithms have varying sample efficiency and training speed, especial
 ### Hopper (MuJoCo)
 
 
-![Hopper](pics/Hopper.png)
+![Hopper](pics/Hopper-v3.png)
 
 
 

@@ -65,7 +65,7 @@ CUDA_VISIBLE_DEVICES=0 python run.py \
 ```
 to disable all improvement modules.
 
-Here is a simple ablation result on three atari games. We can find that distributional RL and multi-step bootstrap appear to be the most important modules in environment "breakout" and "qbert", which is similar to the [original Rainbow paper](https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/viewFile/17204/16680) except that we do not observe the effect of removing prioritized replay while they find that prioritized replay to be also very important.
+Here is a simple ablation result on three atari games. We can find that distributional RL and multi-step bootstrap appear to be the most important modules in environment "breakout" and "qbert", which is similar to the [original Rainbow paper](https://arxiv.org/abs/1710.02298) except that we do not observe the effect of removing prioritized replay while they find that prioritized replay to be also very important.
 
 ![breakout](../../pics/rainbow_ablation_breakout.png)
 
